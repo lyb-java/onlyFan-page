@@ -19,7 +19,7 @@
 
 <script>
 import TreeSelect from '_c/tree-select'
-import { newTreeData } from '@/mock/data/tree-select'
+// import { newTreeData } from '@/mock/data/tree-select'
 import { getTreeSelectData } from '@/api/data'
 export default {
   name: 'tree_select_page',
@@ -43,8 +43,8 @@ export default {
       this.treeSelected = [111, 114]
     },
     changeTreeData () {
-      this.treeData = newTreeData
-      // this.treeSelected = [];
+      // this.treeData = newTreeData
+      this.treeSelected = [];
     },
     handleTreeSelectChange (list) {
       // console.log('=-========', list);

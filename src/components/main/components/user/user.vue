@@ -1,14 +1,14 @@
 <template>
   <div class="user-avator-dropdown">
     <Dropdown @on-click="handleClick">
-      <Badge :dot="!!messageUnreadCount">
-        <Avatar :src="userAvator"/>
+      <Badge>
+        <avatar username='霞'  style="background-color: #2d8cf0" color="pink" />
       </Badge>
-      <Icon :size="18" type="md-arrow-dropdown"></Icon>
+      <Icon :size="18" type="md-arrow-dropdown"/>
       <DropdownMenu slot="list">
-        <DropdownItem name="message">
-          消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
-        </DropdownItem>
+<!--        <DropdownItem name="message">-->
+<!--          消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>-->
+<!--        </DropdownItem>-->
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
@@ -18,6 +18,7 @@
 <script>
 import './user.less'
 import { mapActions } from 'vuex'
+import Avatar from 'vue-avatar'
 export default {
   name: 'User',
   props: {
@@ -29,6 +30,9 @@ export default {
       type: Number,
       default: 0
     }
+  },
+  components: {
+    Avatar
   },
   methods: {
     ...mapActions([

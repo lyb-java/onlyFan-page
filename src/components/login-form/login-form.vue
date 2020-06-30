@@ -27,7 +27,7 @@ export default {
       type: Array,
       default: () => {
         return [
-          { required: true, message: '账号不能为空', trigger: 'blur' }
+          { required: true, message: '用户名不能为空', trigger: 'blur' }
         ]
       }
     },
@@ -43,7 +43,7 @@ export default {
   data () {
     return {
       form: {
-        userName: 'super_admin',
+        userName: '超级管理员',
         password: '123465'
       }
     }

@@ -20,22 +20,46 @@
 
 <script>
 import LoginForm from '_c/login-form'
-import { mapActions } from 'vuex'
+import axios from '@/libs/api.request'
+import config from '@/config/url'
+import { setToken, getToken } from '@/libs/util'
 export default {
   components: {
     LoginForm
   },
   methods: {
-    ...mapActions([
-      'handleLogin',
-      'getUserInfo'
-    ]),
     handleSubmit ({ userName, password }) {
-      this.handleLogin({ userName, password }).then(res => {
-        // this.getUserInfo().then(res => {
+      let t = this
+      let user= {
+        userName:userName,
+        password:password
+      }
+      axios.request({url:config.host_admin + config.login,data:user,method: 'post'
+      }).then(res => {
+        if (res.data.code === '000000') {
+          let rspDto = res.data.data
+          //设置 用户名、账户名、用户id、权限代码、
+          t.$store.commit('setUserName', rspDto.userName)
+          t.$store.commit('setAccount', rspDto.account)
+          t.$store.commit('setUserId', rspDto.id)
+          t.$store.commit('setAccess', rspDto.access)
+          t.$store.commit('setHasGetInfo', true)
+          //设置token
+          setToken(rspDto.token)
+          //跳转主页
           this.$router.push({
             name: this.$config.homeName
-          // })
+          })
+         } else {
+          this.$Modal.error({
+            title: '失败',
+            content: res.data.msg
+          })
+        }
+      }).catch(err => {
+        this.$Modal.error({
+          title: '失败',
+          content: '系统维护中，请稍后'
         })
       })
     }
