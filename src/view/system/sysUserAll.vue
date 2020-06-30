@@ -1,4 +1,5 @@
 <template>
+  <Card>
   <div>
     <div>
         <span>用户名称：</span>
@@ -7,7 +8,7 @@
         <span>账户名称：</span>
         <Input v-model="condition.account" placeholder="请输入账户名称"  clearable style="width: 200px" />
         &nbsp;&nbsp;
-        <span>是否启用：</span>
+        <span>是否有效：</span>
         <Select v-model="condition.isEnable" style="width:200px" clearable>
           <Option  value="0" >否</Option>
           <Option  value="1" >是</Option>
@@ -24,6 +25,7 @@
   </div>
   </div>
   </div>
+  </Card>
 </template>
 <script>
   import config2 from '@/config/url'

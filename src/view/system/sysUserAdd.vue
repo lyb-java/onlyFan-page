@@ -5,13 +5,15 @@
         <Form-item label="用户名称：" prop="userName">
           <Input v-model.trim="reqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
         </Form-item>
-        <Form-item label="账户名称：" prop="account">
-          <Input  v-model.trim="reqDto.account" placeholder="请填写账户名称" style="width: 204px" />
+        <Form-item label="用户账户：" prop="account">
+          <Input type="input" v-model.trim="reqDto.account" placeholder="请填写用户账户" style="width: 204px" />
         </Form-item>
-        <Form-item label="密&nbsp;&nbsp;码：" prop="password">
-          <Input type="password" v-model.trim="reqDto.password" placeholder="请填写密码" style="width: 204px"/>
+        <Form-item label="密　　码：" prop="password" >
+          <Input v-model="reqDto.password" type="password" password placeholder="请填写密码" style="width: 200px" />
         </Form-item>
-
+        <Form-item label="确认密码：" prop="password1" >
+          <Input v-model="reqDto.password1" type="password" password placeholder="请填写确认密码" style="width: 200px" />
+        </Form-item>
         <Form-item label="是否有效：" prop="isEnable">
           <RadioGroup v-model="reqDto.isEnable">
             <Radio label="0">否</Radio>
@@ -20,7 +22,7 @@
         </Form-item>
         <div style="text-align: center;">
           <Button type="primary" @click="validateSubmit()">&nbsp;&nbsp;提交</Button>
-          <Button type="dashed" @click="exitAdd" style="margin-left:20px">&nbsp;&nbsp;返回</Button>
+          <Button type="dashed" @click="closetab" style="margin-left:20px">&nbsp;&nbsp;返回</Button>
         </div>
       </Form>
     </Card>
@@ -36,12 +38,21 @@
   }
   export default {
     data () {
+      const pwdValid =(rule, value, callback) => {
+        let password = this.reqDto.password
+        let password1 = this.reqDto.password1
+        if (password !== password1) {
+          callback(new Error('两次密码不一样，请重新输入！'))
+        }
+        callback()
+      }
       return {
         reqDto: {
           account:null,
           password: null,
           userName: null,
           isEnable: '1',
+          password1:null,
         },
         /** 表单验证 */
         ruleValidate: {
@@ -52,6 +63,11 @@
           password: [
             { required: true, message: '密码不能为空', trigger: 'blur' },
             { type: 'string', max: 8, message: '最多输入8个字符', trigger: 'blur' },
+          ],
+          password1: [
+            { required: true, message: '确认密码不能为空', trigger: 'blur'},
+            { type: 'string', max: 8, message: '最多输入8个字符', trigger: 'blur' },
+            { validator: pwdValid, trigger: 'blur' },
           ],
           userName: [
             { required: true, message: '用户名不能为空', trigger: 'blur' },
@@ -98,10 +114,10 @@
           }
         })
       },
-      // 返回
-      exitAdd () {
-        this.$router.go(-1)
-      }
+      closetab(){
+        this.$store.dispatch('delVisitedViews', this.$route);
+        this.$router.go(-1);
+      },
     }
 
   }
