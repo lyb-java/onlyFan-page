@@ -28,10 +28,10 @@ export default {
     LoginForm
   },
   methods: {
-    handleSubmit ({ userName, password }) {
+    handleSubmit ({ account, password }) {
       let t = this
       let user= {
-        userName:userName,
+        account:account,
         password:password
       }
       axios.request({url:config.host_admin + config.login,data:user,method: 'post'

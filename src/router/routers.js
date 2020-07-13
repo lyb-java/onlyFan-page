@@ -63,7 +63,7 @@ export default [
         path: 'user',
         name: '用户管理',
         meta: {
-          icon: '_qq',
+          icon: 'md-person',
           title: '用户管理'
         },
         /*
@@ -73,23 +73,12 @@ export default [
                             */
         access: ['super_admin'],
         component: () => import('@/view/system/sysUserAll.vue')
-      },
-      {
-        path: 'addUser',
-        // title: '添加系统用户',
-        name: '添加系统用户',
-        meta: {
-          hideInMenu: true,
-          title: '添加系统用户'
-        },
-        access: ['super_admin'],
-        component: () => import('@/view/system/sysUserAdd.vue')
       }
       ,{
         path: 'role',
         name: '角色管理',
         meta: {
-          icon: '_qq',
+          icon: 'md-build',
           title: '角色管理'
         },
         /*
@@ -98,7 +87,7 @@ export default [
                             * 如果不设置此字段，则所有用户均可访问
                             */
         access: ['super_admin'],
-        component: () => import('@/view/join-page.vue')
+        component: () => import('@/view/system/sysUserAll.vue')
       }
     ]
   },
