@@ -2,17 +2,8 @@
   <Card>
   <div>
     <div>
-        <span>用户名称：</span>
-        <Input v-model="condition.userName" placeholder="请输入用户名称"  clearable style="width: 200px" />
-      &nbsp;&nbsp;
-        <span>账号：</span>
-        <Input v-model="condition.account" placeholder="请输入账号"  clearable style="width: 200px" />
-        &nbsp;&nbsp;
-        <span>是否有效：</span>
-        <Select v-model="condition.isEnable" style="width:200px" clearable>
-          <Option  value="0" >否</Option>
-          <Option  value="1" >是</Option>
-        </Select>
+        <span>角色名称：</span>
+        <Input v-model="condition.roleName" placeholder="请输入角色名称"  clearable style="width: 200px" />
       &nbsp;&nbsp;
       <Button type="primary" icon="ios-search" :loading="serachLoading" @click="getTable()">&nbsp;&nbsp;查询</Button>&nbsp;&nbsp;
       <Button type="primary" icon="ios-add" @click="addModalClick()">&nbsp;&nbsp;添加</Button>
@@ -27,25 +18,13 @@
 <!--  添加  -->
     <Modal
       v-model="addModal"
-      title="添加用户">
+      title="添加角色">
       <Form ref="addReqDto" :model="addReqDto" :rules="addRuleValidate" :label-width="140" style="margin-top: 30px">
-        <Form-item label="用户名称：" prop="userName">
-          <Input v-model.trim="addReqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
+        <Form-item label="角色名称：" prop="roleName">
+          <Input v-model.trim="addReqDto.roleName" placeholder="请填写角色名称" style="width: 204px"/>
         </Form-item>
-        <Form-item label="用户账号：" prop="account">
-          <Input type="input" v-model.trim="addReqDto.account" placeholder="请填写用户账号" style="width: 204px" />
-        </Form-item>
-        <Form-item label="密　　码：" prop="password" >
-          <Input v-model="addReqDto.password" type="password" password placeholder="请填写密码" style="width: 200px" />
-        </Form-item>
-        <Form-item label="确认密码：" prop="password1" >
-          <Input v-model="addReqDto.password1" type="password" password placeholder="请填写确认密码" style="width: 200px" />
-        </Form-item>
-        <Form-item label="是否有效：" prop="isEnable">
-          <RadioGroup v-model="addReqDto.isEnable">
-            <Radio label="0">否</Radio>
-            <Radio label="1">是</Radio>
-          </RadioGroup>
+        <Form-item label="角色权限代码：" prop="access">
+          <Input type="input" v-model.trim="addReqDto.access" placeholder="请填写角色权限代码" style="width: 204px" />
         </Form-item>
       </Form>
       <div slot="footer">
@@ -56,25 +35,13 @@
     <!--  编辑  -->
     <Modal
       v-model="editModal"
-      title="编辑用户">
+      title="编辑角色">
       <Form ref="editReqDto" :model="editReqDto" :rules="editRuleValidate" :label-width="140" style="margin-top: 30px">
-        <Form-item label="用户名称：" prop="userName">
-          <Input v-model.trim="editReqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
+        <Form-item label="角色名称：" prop="roleName">
+          <Input v-model.trim="editReqDto.roleName" placeholder="请填写角色名称" style="width: 204px"/>
         </Form-item>
-        <Form-item label="用户账号：" prop="account">
-          <Input type="input" v-model.trim="editReqDto.account" placeholder="请填写用户账号" style="width: 204px" />
-        </Form-item>
-        <Form-item label="密　　码：" prop="password" >
-          <Input v-model="editReqDto.password" type="password" password placeholder="请填写密码" style="width: 200px" />
-        </Form-item>
-        <Form-item label="确认密码：" prop="password1" >
-          <Input v-model="editReqDto.password1" type="password" password placeholder="请填写确认密码" style="width: 200px" />
-        </Form-item>
-        <Form-item label="是否有效：" prop="isEnable">
-          <RadioGroup v-model="editReqDto.isEnable">
-            <Radio label="0">否</Radio>
-            <Radio label="1">是</Radio>
-          </RadioGroup>
+        <Form-item label="角色权限代码：" prop="access">
+          <Input type="input" v-model.trim="editReqDto.access" placeholder="请填写角色权限代码" style="width: 204px" />
         </Form-item>
       </Form>
       <div slot="footer">
@@ -85,16 +52,13 @@
 <!--  查看详情  -->
     <Modal
       v-model="userDetailModal"
-      title="用户信息">
+      title="角色信息">
       <Form ref="userDetailDto" :model="userDetailDto"  :label-width="140" style="margin-top: 30px">
-        <Form-item label="用户名称：" prop="userName">
-          <span>{{userDetailDto.userName}}</span>
+        <Form-item label="角色名称：" prop="roleName">
+          <span>{{userDetailDto.roleName}}</span>
         </Form-item>
-        <Form-item label="用户账号：" prop="account">
-          <span>{{userDetailDto.account}}</span>
-        </Form-item>
-        <Form-item label="是否有效：" prop="isEnable">
-          <span>{{userDetailDto.isEnable}}</span>
+        <Form-item label="角色权限代码：" prop="access">
+          <span>{{userDetailDto.access}}</span>
         </Form-item>
         <Form-item label="创建时间：" prop="createTime">
           <span>{{userDetailDto.createTime}}</span>
@@ -116,22 +80,6 @@
   import { formatString } from '@/api/Utlis'
   export default {
     data () {
-      const pwdValid =(rule, value, callback) => {
-        let password = this.addReqDto.password
-        let password1 = this.addReqDto.password1
-        if (password !== password1) {
-          callback(new Error('两次密码不一致！'))
-        }
-        callback()
-      }
-      const pwdValid1 =(rule, value, callback) => {
-        let password = this.editReqDto.password
-        let password1 = this.editReqDto.password1
-        if (password !== password1) {
-          callback(new Error('两次密码不一致！'))
-        }
-        callback()
-      }
       return {
         PAGE_INDEX: 1,
         /* 分页total属性绑定值 */
@@ -143,9 +91,7 @@
         pageSize: 10,
         /* 查询条件 */
         condition: {
-          userName:null,
-          account:null,
-          isEnable:null,
+          roleName:null,
         },
         /* 菜单信息列表数据 */
         tableData:[],
@@ -157,32 +103,26 @@
             width: 60
           },
           {
-            title: '用户名称',
-            key: 'userName',
-            tooltip: true,
-            align: 'center'
-          },
-          {
-            title: '账号',
-            key: 'account',
-            tooltip: true,
-            align: 'center'
-          },
-          {
-            title: '有效状态',
-            key: 'isEnable',
-            tooltip: true,
-            align: 'center'
-          },
-          {
             title: '角色名称',
             key: 'roleName',
             tooltip: true,
             align: 'center'
           },
           {
+            title: '角色权限代码',
+            key: 'access',
+            tooltip: true,
+            align: 'center'
+          },
+          {
             title: '创建时间',
             key: 'createTime',
+            tooltip: true,
+            align: 'center'
+          },
+          {
+            title: '修改时间',
+            key: 'updateTime',
             tooltip: true,
             align: 'center'
           },
@@ -235,62 +175,35 @@
         //按钮转转转
         addLoading:false,
         addReqDto: {
-          account:null,
-          password: null,
-          userName: null,
-          isEnable: '1',
-          password1:null,
+          roleName:null,
+          access: null,
+
         },
-        /** 添加用户属性声明 */
+        /** 修改用户属性声明 */
         //添加模态框
         editModal:false,
         //按钮转转转
         editLoading:false,
         editReqDto: {},
         /** 表单验证 */
-        addRuleValidate: {
-          account: [
-            { required: true, message: '账户不能为空', trigger: 'blur' },
+        editRuleValidate: {
+          access: [
+            { required: true, message: '角色权限代码不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
-          password: [
-            { required: true, message: '密码不能为空', trigger: 'blur' },
-            { type: 'string', max: 8, message: '最多输入8个字符', trigger: 'blur' },
-          ],
-          password1: [
-            { required: true, message: '确认密码不能为空', trigger: 'blur'},
-            { type: 'string', max: 8, message: '最多输入8个字符', trigger: 'blur' },
-            { validator: pwdValid, trigger: 'blur' },
-          ],
-          userName: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' },
+          roleName: [
+            { required: true, message: '角色名称不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
-          ],
-          isEnable: [
-            { required: true, message: '请选择是否有效', trigger: 'change' }
           ],
         },
-        /** 表单验证 */
-        editRuleValidate: {
-          account: [
-            { required: true, message: '账户不能为空', trigger: 'blur' },
+        addRuleValidate: {
+          access: [
+            { required: true, message: '角色权限代码不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
-          password: [
-            { required: true, message: '密码不能为空', trigger: 'blur' },
-            { type: 'string', max: 8, message: '最多输入8个字符', trigger: 'blur' },
-          ],
-          password1: [
-            { required: true, message: '确认密码不能为空', trigger: 'blur'},
-            { type: 'string', max: 8, message: '最多输入8个字符', trigger: 'blur' },
-            { validator: pwdValid1, trigger: 'blur' },
-          ],
-          userName: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' },
+          roleName: [
+            { required: true, message: '角色名称不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
-          ],
-          isEnable: [
-            { required: true, message: '请选择是否有效', trigger: 'change' }
           ],
         },
         userDetailModal:false,
@@ -310,7 +223,7 @@
           condition: t.condition
         }
         this.serachLoading = true
-        ajax(config2.host_admin + config2.getUserAll, 'post',params)
+        ajax(config2.host_admin + config2.getRoleAll, 'post',params)
           .then(res => {
             this.serachLoading = false
             let result = res.data.data
@@ -319,12 +232,8 @@
               t.total = result.totalCount
               t.tableData.forEach(function(value, index) {
                 value.indexNum = index + (t.pageIndex - 1) * t.pageSize + 1
-                if (value.isEnable === '0') {
-                  value.isEnable = '无效'
-                } else if(value.isEnable === '1') {
-                  value.isEnable = '有效'
-                }
                 value.createTime = formatString(value.createTime+'')
+                value.updateTime = formatString(value.updateTime+'')
               })
             } else {
               t.$Modal.error({
@@ -350,17 +259,17 @@
       validateSubmitAdd () {
         this.$refs['addReqDto'].validate(valid => {
           if (valid) {
-            this.addUser()
+            this.addRole()
           } else {
             this.$Message.error('请完善表单信息!')
           }
         })
       },
-      /** 添加用户提交 */
-      addUser () {
+      /** 添加角色提交 */
+      addRole () {
         let params = this.addReqDto
         this.addLoading=true
-        ajax(config2.host_admin + config2.addUser, 'post', params)
+        ajax(config2.host_admin + config2.addRole, 'post', params)
           .then(res => {
             this.addLoading=false
             if (res.data.code === '000000') {
@@ -395,7 +304,7 @@
       editModalClick(id){
         this.editModal = true
         this.$refs['editReqDto'].resetFields()
-        this.getUser(id,1)
+        this.getRole(id,1)
       },
       /** 点击取消清空编辑表单 */
       editCancel(){
@@ -403,27 +312,19 @@
         this.editModal = false
       },
       /** 查询用户详情  type 0 详情  1 编辑 */
-      getUser(id,type){
+      getRole(id,type){
         let t = this
-        ajax(config2.host_admin + config2.getUserDetail + '?id='+id, 'post')
+        ajax(config2.host_admin + config2.getRoleDetail + '?id='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
               if(type === 0){
                 this.userDetailDto = result
-                if(this.userDetailDto.isEnable === '0'){
-                  this.userDetailDto.isEnable = '无效'
-                }else{
-                  this.userDetailDto.isEnable = '有效'
-                }
                 this.userDetailDto.createTime = formatString(this.userDetailDto.createTime+'')
                 this.userDetailDto.updateTime = formatString(this.userDetailDto.updateTime+'')
               }else{
                 this.editReqDto = result
-                this.editReqDto.password = ''
               }
-
-
             } else {
               t.$Modal.error({
                 title: '失败',
@@ -441,17 +342,17 @@
       validateSubmitEdit () {
         this.$refs['editReqDto'].validate(valid => {
           if (valid) {
-            this.editUser()
+            this.editRole()
           } else {
             this.$Message.error('请完善表单信息!')
           }
         })
       },
       /** 用户编辑提交 */
-      editUser(){
+      editRole(){
         let params = this.editReqDto
         this.editLoading=true
-        ajax(config2.host_admin + config2.editUser, 'post', params)
+        ajax(config2.host_admin + config2.editRole, 'post', params)
           .then(res => {
             this.editLoading=false
             if (res.data.code === '000000') {
@@ -475,7 +376,7 @@
       /** 详情 */
       userDetailClick(id){
         this.userDetailModal = true
-        this.getUser(id,0)
+        this.getRole(id,0)
       },
       /** 详情点击取消  关闭模态框 */
       userDetailCancel(){
@@ -488,7 +389,7 @@
           onOk: () => {
             let t = this
             ajax(
-              config2.host_admin + config2.delUser + '?id=' + id, 'post'
+              config2.host_admin + config2.delRole + '?id=' + id, 'post'
             )
               .then(res => {
                 if (res.data.code !== '000000') {

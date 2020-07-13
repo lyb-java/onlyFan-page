@@ -87,7 +87,7 @@ export default [
                             * 如果不设置此字段，则所有用户均可访问
                             */
         access: ['super_admin'],
-        component: () => import('@/view/system/sysUserAll.vue')
+        component: () => import('@/view/system/sysRoleAll.vue')
       }
     ]
   },
