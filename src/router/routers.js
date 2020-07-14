@@ -92,6 +92,102 @@ export default [
     ]
   },
   {
+    path: '/',
+    name: '/student',
+    component: Main,
+    children: [
+      {
+        path: '/student',
+        name: '学生信息管理',
+        meta: {
+          title: '学生信息管理',
+          icon: 'md-contacts'
+        },
+        component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: '/teacher',
+    component: Main,
+    children: [
+      {
+        path: '/teacher',
+        name: '教师信息管理',
+        meta: {
+          title: '教师信息管理',
+          icon: 'md-people'
+        },
+        component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: '/class',
+    component: Main,
+    children: [
+      {
+        path: '/class',
+        name: '班级信息管理',
+        meta: {
+          title: '班级信息管理',
+          icon: 'logo-buffer'
+        },
+        component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: '/curriculum',
+    component: Main,
+    children: [
+      {
+        path: '/curriculum',
+        name: '课程信息管理',
+        meta: {
+          title: '课程信息管理',
+          icon: 'md-book'
+        },
+        component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: '/achievement',
+    component: Main,
+    children: [
+      {
+        path: '/achievement',
+        name: '成绩信息管理',
+        meta: {
+          title: '成绩信息管理',
+          icon: 'ios-albums-outline'
+        },
+        component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: '/finance',
+    component: Main,
+    children: [
+      {
+        path: '/finance',
+        name: '财务报表信息管理',
+        meta: {
+          title: '财务报表信息管理',
+          icon: 'logo-usd'
+        },
+        component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
     path: '',
     name: 'doc',
     meta: {

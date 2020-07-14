@@ -2,7 +2,7 @@
   <div class="user-avator-dropdown">
     <Dropdown @on-click="handleClick">
       <Badge>
-        <avatar username='霞'  style="background-color: #2d8cf0" color="pink" />
+        <avatar username = '李'  style="background-color: #2d8cf0" color="pink" />
       </Badge>
       <Icon :size="18" type="md-arrow-dropdown"/>
       <DropdownMenu slot="list">
@@ -19,6 +19,7 @@
 import './user.less'
 import { mapActions } from 'vuex'
 import Avatar from 'vue-avatar'
+import {getUserInfo} from "../../../../api/user";
 export default {
   name: 'User',
   props: {
@@ -33,6 +34,8 @@ export default {
   },
   components: {
     Avatar
+  },
+  mounted() {
   },
   methods: {
     ...mapActions([
