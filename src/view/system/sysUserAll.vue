@@ -32,6 +32,11 @@
         <Form-item label="用户名称：" prop="userName">
           <Input v-model.trim="addReqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
         </Form-item>
+        <Form-item label="用户类型：" prop="roleId">
+          <Select v-model.trim="addReqDto.roleId" filterable style="width:204px">
+            <Option v-for="item in roles" :value="item.roleId" :key="item.roleId">{{item.roleName}}</Option>
+          </Select>
+        </Form-item>
         <Form-item label="用户账号：" prop="account">
           <Input type="input" v-model.trim="addReqDto.account" placeholder="请填写用户账号" style="width: 204px" />
         </Form-item>
@@ -60,6 +65,11 @@
       <Form ref="editReqDto" :model="editReqDto" :rules="editRuleValidate" :label-width="140" style="margin-top: 30px">
         <Form-item label="用户名称：" prop="userName">
           <Input v-model.trim="editReqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
+        </Form-item>
+        <Form-item label="用户类型：" prop="roleId">
+          <Select v-model="editReqDto.roleId" filterable style="width:204px">
+            <Option v-for="item in roles" :value="item.roleId" :key="item.roleId">{{item.roleName}}</Option>
+          </Select>
         </Form-item>
         <Form-item label="用户账号：" prop="account">
           <Input type="input" v-model.trim="editReqDto.account" placeholder="请填写用户账号" style="width: 204px" />
@@ -92,6 +102,9 @@
         </Form-item>
         <Form-item label="用户账号：" prop="account">
           <span>{{userDetailDto.account}}</span>
+        </Form-item>
+        <Form-item label="用户类型：" prop="roleName">
+          <span>{{userDetailDto.roleName}}</span>
         </Form-item>
         <Form-item label="是否有效：" prop="isEnable">
           <span>{{userDetailDto.isEnable}}</span>
@@ -199,7 +212,7 @@
                   },
                   on: {
                     click: () => {
-                      this.editModalClick(params.row.id)
+                      this.editModalClick(params.row.userId)
                     }
                   }
                 },'编辑'),
@@ -210,7 +223,7 @@
                   },
                   on: {
                     click: () => {
-                      this.userDetailClick(params.row.id)
+                      this.userDetailClick(params.row.userId)
                     }
                   }
                 },'查看详情'),
@@ -221,7 +234,7 @@
                   },
                   on: {
                     click: () => {
-                      this.delete(params.row.id)
+                      this.delete(params.row.userId)
                     }
                   }
                 },'删除'),
@@ -234,6 +247,7 @@
         addModal:false,
         //按钮转转转
         addLoading:false,
+        roles:[],
         addReqDto: {
           account:null,
           password: null,
@@ -249,6 +263,9 @@
         editReqDto: {},
         /** 表单验证 */
         addRuleValidate: {
+          roleId: [
+            { required: true, message: '请选择用户类型',trigger: 'change', type: 'number' }
+          ],
           account: [
             { required: true, message: '账户不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
@@ -275,6 +292,9 @@
           account: [
             { required: true, message: '账户不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
+          ],
+          roleId: [
+            { required: true, message: '请选择用户类型',trigger: 'change', type: 'number' }
           ],
           password: [
             { required: true, message: '密码不能为空', trigger: 'blur' },
@@ -385,27 +405,32 @@
       addModalClick(){
         this.addModal = true;
         this.$refs['addReqDto'].resetFields()
+        this.getUserRole()
       },
       /** 点击取消清空添加表单 */
       addCancel(){
         this.$refs['addReqDto'].resetFields()// 重置表单
         this.addModal = false
+        this.roles = []
       },
       /** 点击编辑  打开并清空表单 */
       editModalClick(id){
         this.editModal = true
         this.$refs['editReqDto'].resetFields()
+        this.getUserRole()
         this.getUser(id,1)
+
       },
       /** 点击取消清空编辑表单 */
       editCancel(){
         this.$refs['editReqDto'].resetFields()// 重置表单
         this.editModal = false
+        this.roles = []
       },
       /** 查询用户详情  type 0 详情  1 编辑 */
       getUser(id,type){
         let t = this
-        ajax(config2.host_admin + config2.getUserDetail + '?id='+id, 'post')
+        ajax(config2.host_admin + config2.getUserDetail + '?userId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
@@ -424,6 +449,27 @@
               }
 
 
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
+          })
+        })
+      },
+      /** 查询用户角色下拉列表 */
+      getUserRole(id,type){
+        let t = this
+        ajax(config2.host_admin + config2.getRoleAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.roles = result.data
             } else {
               t.$Modal.error({
                 title: '失败',
@@ -488,7 +534,7 @@
           onOk: () => {
             let t = this
             ajax(
-              config2.host_admin + config2.delUser + '?id=' + id, 'post'
+              config2.host_admin + config2.delUser + '?userId=' + id, 'post'
             )
               .then(res => {
                 if (res.data.code !== '000000') {

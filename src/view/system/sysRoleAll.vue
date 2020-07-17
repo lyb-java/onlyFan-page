@@ -139,7 +139,7 @@
                   },
                   on: {
                     click: () => {
-                      this.editModalClick(params.row.id)
+                      this.editModalClick(params.row.roleId)
                     }
                   }
                 },'编辑'),
@@ -150,7 +150,7 @@
                   },
                   on: {
                     click: () => {
-                      this.userDetailClick(params.row.id)
+                      this.userDetailClick(params.row.roleId)
                     }
                   }
                 },'查看详情'),
@@ -161,7 +161,7 @@
                   },
                   on: {
                     click: () => {
-                      this.delete(params.row.id)
+                      this.delete(params.row.roleId)
                     }
                   }
                 },'删除'),
@@ -314,7 +314,7 @@
       /** 查询用户详情  type 0 详情  1 编辑 */
       getRole(id,type){
         let t = this
-        ajax(config2.host_admin + config2.getRoleDetail + '?id='+id, 'post')
+        ajax(config2.host_admin + config2.getRoleDetail + '?roleId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
@@ -389,7 +389,7 @@
           onOk: () => {
             let t = this
             ajax(
-              config2.host_admin + config2.delRole + '?id=' + id, 'post'
+              config2.host_admin + config2.delRole + '?roleId=' + id, 'post'
             )
               .then(res => {
                 if (res.data.code !== '000000') {
