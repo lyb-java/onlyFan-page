@@ -6,8 +6,8 @@
         <Form ref="addReqDto" :model="addReqDto" :rules="addRuleValidate" :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
          <div>
-          <Form-item label="学号：" prop="stuNo">
-            <Input v-model.trim="addReqDto.stuNo" placeholder="请填写学号" style="width: 204px"/>
+          <Form-item label="工号：" prop="teacherNo">
+            <Input v-model.trim="addReqDto.teacherNo" placeholder="请填写工号" style="width: 204px"/>
           </Form-item>
           <Form-item label="姓名：" prop="name">
             <Input type="input" v-model.trim="addReqDto.name" placeholder="请填写姓名" style="width: 204px" />
@@ -82,7 +82,7 @@
         //按钮转转转
         addLoading:false,
         addReqDto: {
-          stuNo:null,
+          teacherNo:null,
           name:null,
           gender:null,
           age:null,
@@ -93,8 +93,8 @@
         },
         /** 表单验证 */
         addRuleValidate: {
-          stuNo: [
-            { required: true, message: '学号不能为空',trigger: 'blur'},
+          teacherNo: [
+            { required: true, message: '工号不能为空',trigger: 'blur'},
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
           name: [
@@ -126,7 +126,7 @@
         },
       }
     },
-    name: 'studentAdd',
+    name: 'teacherAdd',
     methods:{
       ...mapMutations([
         'closeTag'
@@ -145,11 +145,12 @@
       add() {
         let params = this.addReqDto
         this.addLoading=true
-        ajax(config2.host_admin + config2.addStudent, 'post', params)
+        ajax(config2.host_admin + config2.addTeacher, 'post', params)
           .then(res => {
             this.addLoading=false
             if (res.data.code === '000000') {
               this.$Message.success(res.data.msg)
+              this.$router.go(-1)
               this.close()
             } else {
               this.$Modal.error({
@@ -167,7 +168,7 @@
       },
       close(){
         this.closeTag({
-          name: 'studentAdd',
+          name: 'teacherAdd',
         })
         // this.$router.go(-1)
       }

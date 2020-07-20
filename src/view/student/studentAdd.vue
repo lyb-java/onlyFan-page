@@ -26,10 +26,15 @@
               v-model="addReqDto.birthday"
               format="yyyy-MM-dd"
               type="date"
-            ></DatePicker>
+            />
           </Form-item>
           </div>
           <div>
+            <Form-item label="所属班级：" prop="classId">
+              <Select v-model.trim="addReqDto.classId" filterable style="width:204px">
+                <Option v-for="item in classList" :value="item.classId" :key="item.classId">{{item.name}}</Option>
+              </Select>
+            </Form-item>
           <Form-item label="手机号：" prop="phone">
             <Input type="input" v-model.trim="addReqDto.phone" placeholder="请填写手机号" style="width: 204px" />
           </Form-item>
@@ -41,7 +46,7 @@
               v-model="addReqDto.admissionDate"
               format="yyyy-MM-dd"
               type="date"
-            ></DatePicker>
+            />
           </Form-item>
           <Form-item label="在校状态：" prop="state">
             <RadioGroup v-model="addReqDto.state">
@@ -79,10 +84,12 @@
       }
       return {
         /** 添加属性声明 */
+        classList:[],
         //按钮转转转
         addLoading:false,
         addReqDto: {
           stuNo:null,
+          classId:null,
           name:null,
           gender:null,
           age:null,
@@ -123,8 +130,14 @@
           admissionDate: [
             { required: true, message: '出生日期不能为空', trigger: 'blur',type: 'date'},
           ],
+          classId: [
+            { required: true, message: '请选择所属班级', trigger: 'blur',type:'number'},
+          ],
         },
       }
+    },
+    mounted() {
+      this.getClassOption()
     },
     name: 'studentAdd',
     methods:{
@@ -150,6 +163,7 @@
             this.addLoading=false
             if (res.data.code === '000000') {
               this.$Message.success(res.data.msg)
+              this.$router.go(-1)
               this.close()
             } else {
               this.$Modal.error({
@@ -162,6 +176,27 @@
           this.$Modal.error({
             title: '失败',
             content: '系统维护中，请稍后'
+          })
+        })
+      },
+      /** 查询班级下拉列表 */
+      getClassOption(){
+        let t = this
+        ajax(config2.host_admin + config2.getClassAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.classList = result.data
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
           })
         })
       },

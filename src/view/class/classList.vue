@@ -2,27 +2,8 @@
   <Card>
   <div>
     <div>
-        <span>学号：</span>
-        <Input v-model="condition.stuNo" placeholder="请输入学号"  clearable style="width: 200px" />
-      &nbsp;&nbsp;
-        <span>姓名：</span>
-        <Input v-model="condition.name" placeholder="请输入姓名"  clearable style="width: 200px" />
-      &nbsp;&nbsp;
-      <span>手机号：</span>
-      <Input v-model="condition.phone" placeholder="请输入手机号"  clearable style="width: 200px" />
-        &nbsp;&nbsp;
-        <span>性别：</span>
-        <Select v-model="condition.gender" placeholder="请选择性别" style="width:200px" clearable>
-          <Option  value="0" >男</Option>
-          <Option  value="1" >女</Option>
-        </Select>
-      <br/>
-      <br/>
-        <span>状态：</span>
-        <Select v-model="condition.state" style="width:200px" placeholder="请选择状态" clearable>
-          <Option  value="0" >在校 </Option>
-          <Option  value="1" >离校</Option>
-        </Select>
+        <span>班级名称：</span>
+        <Input v-model="condition.name" placeholder="请输入班级名称"  clearable style="width: 200px" />
       &nbsp;&nbsp; &nbsp;&nbsp;
       <Button type="primary" icon="ios-search" :loading="serachLoading" @click="getTable()">&nbsp;&nbsp;查询</Button>&nbsp;&nbsp;
       <Button type="primary" icon="ios-add" @click="addClick()">&nbsp;&nbsp;添加</Button>
@@ -56,11 +37,7 @@
         showMore:false,
         /* 查询条件 */
         condition: {
-          stuNo:null,
           name:null,
-          phone:null,
-          gender:null,
-          state:null,
         },
         /* 菜单信息列表数据 */
         tableData:[],
@@ -71,31 +48,20 @@
             key: 'indexNum',
           },
           {
-            title: '学号',
-            key: 'stuNo',
-            align: 'center',
-          },
-          {
-            title: '姓名',
+            title: '班级名称',
             key: 'name',
             tooltip: true,
             align: 'center',
           },
           {
-            title: '性别',
-            key: 'gender',
+            title: '所属教师',
+            key: 'teacherName',
             tooltip: true,
             align: 'center',
           },
           {
-            title: '手机号',
-            key: 'phone',
-            tooltip: true,
-            align: 'center',
-          },
-          {
-            title: '状态',
-            key: 'state',
+            title: '班级人数',
+            key: 'classSize',
             tooltip: true,
             align: 'center',
           },
@@ -103,6 +69,11 @@
             title: '操作人',
             key: 'opUserName',
             tooltip: true,
+            align: 'center',
+          },
+          {
+            title: '创建时间',
+            key: 'createTime',
             align: 'center',
           },
           {
@@ -124,8 +95,8 @@
                   },
                   on: {
                     click: () => {
-                      this.$router.push({ name: 'studentEdit',
-                        params: { 'studentId': params.row.studentId }
+                      this.$router.push({ name: 'classEdit',
+                        params: { 'classId': params.row.classId }
                       })
                     }
                   }
@@ -138,8 +109,8 @@
                   on: {
                     click: () => {
                       this.$router.push({
-                        path:'studentDetail',
-                        query: { 'studentId': params.row.studentId }
+                        path:'classDetail',
+                        query: { 'classId': params.row.classId }
                       })
                     }
                   }
@@ -151,7 +122,7 @@
                   },
                   on: {
                     click: () => {
-                      this.delete(params.row.studentId)
+                      this.delete(params.row.classId)
                     }
                   }
                 },'删除'),
@@ -174,7 +145,7 @@
           condition: t.condition
         }
         this.serachLoading = true
-        ajax(config2.host_admin + config2.getStudentAll, 'post',params)
+        ajax(config2.host_admin + config2.getClassAll, 'post',params)
           .then(res => {
             this.serachLoading = false
             let result = res.data.data
@@ -183,17 +154,9 @@
               t.total = result.totalCount
               t.tableData.forEach(function(value, index) {
                 value.indexNum = index + (t.pageIndex - 1) * t.pageSize + 1
-                if (value.state === '0') {
-                  value.state = '在校'
-                } else if(value.state === '1') {
-                  value.state = '离校'
-                }
-                if (value.gender === '0') {
-                  value.gender = '男'
-                } else if(value.gender === '1') {
-                  value.gender = '女'
-                }
+
                 value.updateTime = formatString(value.updateTime+'')
+                value.createTime = formatString(value.createTime+'')
               })
             } else {
               t.$Modal.error({
@@ -221,7 +184,7 @@
           onOk: () => {
             let t = this
             ajax(
-              config2.host_admin + config2.delStudent + '?studentId=' + id, 'post'
+              config2.host_admin + config2.delClass + '?classId=' + id, 'post'
             )
               .then(res => {
                 if (res.data.code !== '000000') {
@@ -247,7 +210,7 @@
       //添加页面跳转
       addClick(){
         this.$router.push({
-          path:'studentAdd'
+          path:'classAdd'
         })
       }
       },

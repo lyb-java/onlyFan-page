@@ -228,7 +228,7 @@ export default [
         path: 'classDetail',
         name: 'classDetail',
         meta: {
-          title: '{{查看教师信息}}',
+          title: '{{查看班级信息}}',
           hideInBread: true,
           hideInMenu: true
         },
@@ -238,49 +238,49 @@ export default [
   },
   {
     path: '/',
-    name: '/curriculum',
+    name: '/course',
     component: Main,
     children: [
       {
-        path: '/curriculum',
+        path: '/course',
         name: '课程信息管理',
         meta: {
           title: '课程信息管理',
           icon: 'md-book'
         },
         access: ['super_admin','admin_teacher'],
-        component: () => import('@/view/curriculum/curriculumList')
+        component: () => import('@/view/course/courseList')
       },
       {
-        path: 'curriculumAdd',
-        name: 'curriculumAdd',
+        path: 'courseAdd',
+        name: 'courseAdd',
         meta: {
           title:'{{添加课程信息}}',
           hideInBread: true,
           hideInMenu: true
         },
-        component: () => import('@/view/curriculum/curriculumAdd')
+        component: () => import('@/view/course/courseAdd')
       },
       {
-        path: 'curriculumEdit',
-        name: 'curriculumEdit',
+        path: 'courseEdit',
+        name: 'courseEdit',
         meta: {
           title: '{{修改课程信息}}',
           hideInBread: true,
           hideInMenu: true
         },
-        component: () => import('@/view/curriculum/curriculumEdit')
+        component: () => import('@/view/course/courseEdit')
       }
       ,
       {
-        path: 'curriculumDetail',
-        name: 'curriculumDetail',
+        path: 'courseDetail',
+        name: 'courseDetail',
         meta: {
           title: '{{查看课程信息}}',
           hideInBread: true,
           hideInMenu: true
         },
-        component: () => import('@/view/curriculum/curriculumDetail')
+        component: () => import('@/view/course/courseDetail')
       }
     ]
   },

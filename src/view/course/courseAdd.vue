@@ -1,32 +1,34 @@
 <template>
   <div>
-    <Card>
-      <div >
-        <!--  修改  -->
+  <Card>
+    <div >
+      <!--  添加  -->
         <Form ref="addReqDto" :model="addReqDto" :rules="addRuleValidate" :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
-            <div>
-              <Form-item label="班级名称：" prop="name">
-                <Input type="input" v-model.trim="addReqDto.name" placeholder="请填写班级名称" style="width: 204px" />
-              </Form-item>
-              <Form-item label="班级人数：" prop="classSize" >
-                <Input  type="number" v-model.trim="addReqDto.classSize"  placeholder="请填写班级人数" style="width: 200px" />
-              </Form-item>
-              <Form-item label="所属教师：" prop="teacherId">
-                <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
-                  <Option v-for="item in teacherList" :value="item.teacherId" :key="item.teacherId">{{item.name}}</Option>
-                </Select>
-              </Form-item>
-            </div>
+         <div>
+          <Form-item label="课程名称：" prop="courseName">
+            <Input type="input" v-model.trim="addReqDto.courseName" placeholder="请填写课程名称" style="width: 204px" />
+          </Form-item>
+           <Form-item label="教师：" prop="teacherId">
+             <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
+               <Option v-for="item in teacherList" :value="item.teacherId" :key="item.teacherId">{{item.name}}</Option>
+             </Select>
+           </Form-item>
+           <Form-item label="班级：" prop="classId">
+             <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
+               <Option v-for="item in classList" :value="item.classId" :key="item.classId">{{item.className}}</Option>
+             </Select>
+           </Form-item>
+          </div>
           </div>
         </Form>
       </div>
-      <div style="text-align: center;margin-top:30px">
-        <Button :loading="addLoading" type="primary"  @click="validateSubmitAdd()">保存</Button>
-        &nbsp;&nbsp;
-        <Button @click="close()">取消</Button>
-      </div>
-    </Card>
+    <div style="text-align: center;margin-top:30px">
+      <Button :loading="addLoading" type="primary"  @click="validateSubmitAdd()">保存</Button>
+      &nbsp;&nbsp;
+      <Button @click="close">取消</Button>
+    </div>
+  </Card>
   </div>
 </template>
 <script>
@@ -36,7 +38,7 @@
   export default {
     data () {
       return {
-        /** 属性声明 */
+        /** 添加属性声明 */
         teacherList:[],
         //按钮转转转
         addLoading:false,
@@ -52,7 +54,7 @@
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
           classSize: [
-            { required: true, message: '班级人数不能为空', trigger: 'blur',type:'number'},
+            { required: true, message: '班级人数不能为空', trigger: 'blur'},
           ],
           teacherId: [
             { required: true, message: '请选择所属教师', trigger: 'blur',type:'number'},
@@ -60,14 +62,10 @@
         },
       }
     },
-    created() {
+    mounted() {
       this.getTeacherOption()
     },
-    mounted() {
-      let classId = this.$route.params.classId
-      this.get(classId)
-    },
-    name: 'classEdit',
+    name: 'classAdd',
     methods:{
       ...mapMutations([
         'closeTag'
@@ -76,21 +74,22 @@
       validateSubmitAdd () {
         this.$refs['addReqDto'].validate(valid => {
           if (valid) {
-            this.edit()
+            this.add()
           } else {
             this.$Message.error('请完善表单信息!')
           }
         })
       },
       /** 提交 */
-      edit() {
+      add() {
         let params = this.addReqDto
         this.addLoading=true
-        ajax(config2.host_admin + config2.editClass, 'post', params)
+        ajax(config2.host_admin + config2.addClass, 'post', params)
           .then(res => {
             this.addLoading=false
             if (res.data.code === '000000') {
               this.$Message.success(res.data.msg)
+              this.$router.go(-1)
               this.close()
             } else {
               this.$Modal.error({
@@ -103,27 +102,6 @@
           this.$Modal.error({
             title: '失败',
             content: '系统维护中，请稍后'
-          })
-        })
-      },
-      /** 查询详情 */
-      get(id){
-        let t = this
-        ajax(config2.host_admin + config2.getClass + '?classId='+id, 'post')
-          .then(res => {
-            let result = res.data.data
-            if (res.data.code === '000000') {
-                this.addReqDto = result
-            } else {
-              t.$Modal.error({
-                title: '失败',
-                content: result.msg
-              })
-            }
-          }).catch(err => {
-          t.$Modal.error({
-            title: '失败',
-            content: '系统维护中，请稍后:'+err
           })
         })
       },
@@ -150,10 +128,10 @@
       },
       close(){
         this.closeTag({
-          name: 'classEdit'
+          name: 'classAdd',
         })
         // this.$router.go(-1)
       }
-    },
+      },
   }
 </script>

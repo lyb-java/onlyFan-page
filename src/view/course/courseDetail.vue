@@ -6,34 +6,25 @@
         <Form ref="addReqDto" :model="addReqDto"  :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
             <div>
-              <Form-item label="学号：" prop="stuNo">
-                <span>{{addReqDto.stuNo}}</span>
-              </Form-item>
-              <Form-item label="姓名：" prop="name">
+              <Form-item label="班级名称：" prop="name">
                 <span>{{addReqDto.name}}</span>
               </Form-item>
-              <Form-item label="性别：" prop="gender">
-                <span>{{addReqDto.gender}}</span>
+              <Form-item label="班级人数：" prop="classSize" >
+                <span>{{addReqDto.classSize}}</span>
               </Form-item>
-              <Form-item label="年龄：" prop="age" >
-                <span>{{addReqDto.age}}</span>
-              </Form-item>
-              <Form-item label="出生日期：" prop="birthday" >
-                <span>{{addReqDto.birthday}}</span>
+              <Form-item label="所属教师：" prop="teacherName">
+                <span>{{addReqDto.teacherName}}</span>
               </Form-item>
             </div>
             <div>
-              <Form-item label="手机号：" prop="phone">
-                <span>{{addReqDto.phone}}</span>
+              <Form-item label="操作人：" prop="opUserName">
+                <span>{{addReqDto.opUserName}}</span>
               </Form-item>
-              <Form-item label="居住地址：" prop="address">
-                <span>{{addReqDto.address}}</span>
+              <Form-item label="创建时间：" prop="createTime">
+                <span>{{addReqDto.createTime}}</span>
               </Form-item>
-              <Form-item label="入校时间：" prop="admissionDate" >
-                <span>{{addReqDto.admissionDate}}</span>
-              </Form-item>
-              <Form-item label="在校状态：" prop="state">
-                <span>{{addReqDto.state}}</span>
+              <Form-item label="修改时间：" prop="updateTime" >
+                <span>{{addReqDto.updateTime}}</span>
               </Form-item>
             </div>
           </div>
@@ -50,7 +41,7 @@
   import config2 from '@/config/url'
   import { ajax } from '@/libs/https'
   import { mapMutations } from 'vuex'
-  import {dateFormat, formatDate} from "../../api/Utlis";
+  import {dateFormat, formatDate, formatString} from "../../api/Utlis";
   export default {
     name: 'studentDetail',
     data () {
@@ -64,8 +55,8 @@
 
     },
     mounted() {
-      this.studentId = this.$route.query.studentId
-      this.get(this.studentId)
+      let classId = this.$route.query.classId
+      this.get(classId)
     },
     methods:{
       ...mapMutations([
@@ -74,18 +65,13 @@
       /** 查询详情 */
       get(id){
         let t = this
-        ajax(config2.host_admin + config2.getStudentDetail + '?studentId='+id, 'post')
+        ajax(config2.host_admin + config2.getClass + '?classId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
               this.addReqDto = result
-              if(result.state === '0'){
-                this.addReqDto.state = '在校'
-              }else{
-                this.addReqDto.state = '离校'
-              }
-              this.addReqDto.birthday = dateFormat(new Date(result.birthday))
-              this.addReqDto.admissionDate = dateFormat(new Date(result.admissionDate))
+              this.addReqDto.createTime =formatString(result.createTime+'')
+              this.addReqDto.updateTime = formatString(result.updateTime+'')
             } else {
               t.$Modal.error({
                 title: '失败',

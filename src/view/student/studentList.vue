@@ -8,17 +8,20 @@
         <span>姓名：</span>
         <Input v-model="condition.name" placeholder="请输入姓名"  clearable style="width: 200px" />
       &nbsp;&nbsp;
+      <span>班级名称：</span>
+      <Input v-model="condition.className" placeholder="请输入班级名称"  clearable style="width: 200px" />
+      &nbsp;&nbsp;
       <span>手机号：</span>
       <Input v-model="condition.phone" placeholder="请输入手机号"  clearable style="width: 200px" />
-        &nbsp;&nbsp;
-        <span>性别：</span>
-        <Select v-model="condition.gender" placeholder="请选择性别" style="width:200px" clearable>
-          <Option  value="0" >男</Option>
-          <Option  value="1" >女</Option>
-        </Select>
       <br/>
       <br/>
-        <span>状态：</span>
+      <span>性别：</span>
+      <Select v-model="condition.gender" placeholder="请选择性别" style="width:200px" clearable>
+        <Option  value="0" >男</Option>
+        <Option  value="1" >女</Option>
+      </Select>
+      &nbsp;&nbsp;
+      <span>状态：</span>
         <Select v-model="condition.state" style="width:200px" placeholder="请选择状态" clearable>
           <Option  value="0" >在校 </Option>
           <Option  value="1" >离校</Option>
@@ -57,6 +60,7 @@
         /* 查询条件 */
         condition: {
           stuNo:null,
+          className:null,
           name:null,
           phone:null,
           gender:null,
@@ -78,6 +82,12 @@
           {
             title: '姓名',
             key: 'name',
+            tooltip: true,
+            align: 'center',
+          },
+          {
+            title: '所属班级',
+            key: 'className',
             tooltip: true,
             align: 'center',
           },

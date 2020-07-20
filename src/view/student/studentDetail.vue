@@ -23,6 +23,9 @@
               </Form-item>
             </div>
             <div>
+              <Form-item label="所属班级：" prop="className">
+                <span>{{addReqDto.className}}</span>
+              </Form-item>
               <Form-item label="手机号：" prop="phone">
                 <span>{{addReqDto.phone}}</span>
               </Form-item>
@@ -84,6 +87,11 @@
               }else{
                 this.addReqDto.state = '离校'
               }
+              if(result.gender === '0'){
+                this.addReqDto.gender = '男'
+              }else{
+                this.addReqDto.gender = '女'
+              }
               this.addReqDto.birthday = dateFormat(new Date(result.birthday))
               this.addReqDto.admissionDate = dateFormat(new Date(result.admissionDate))
             } else {
@@ -99,6 +107,7 @@
           })
         })
       },
+
       close(){
         this.closeTag({
           name: 'studentDetail'

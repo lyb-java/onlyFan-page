@@ -6,8 +6,8 @@
         <Form ref="addReqDto" :model="addReqDto" :rules="addRuleValidate" :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
             <div>
-              <Form-item label="学号：" prop="stuNo">
-                <Input v-model.trim="addReqDto.stuNo" placeholder="请填写学号" style="width: 204px"/>
+              <Form-item label="工号：" prop="teacherNo">
+                <Input v-model.trim="addReqDto.teacherNo" placeholder="请填写工号" style="width: 204px"/>
               </Form-item>
               <Form-item label="姓名：" prop="name">
                 <Input type="input" v-model.trim="addReqDto.name" placeholder="请填写姓名" style="width: 204px" />
@@ -81,9 +81,8 @@
         /** 属性声明 */
         //按钮转转转
         addLoading:false,
-        studentId:null,
         addReqDto: {
-          stuNo:null,
+          teacherNo:null,
           name:null,
           gender:null,
           age:null,
@@ -94,8 +93,8 @@
         },
         /** 表单验证 */
         addRuleValidate: {
-          stuNo: [
-            { required: true, message: '学号不能为空',trigger: 'blur'},
+          teacherNo: [
+            { required: true, message: '工号不能为空',trigger: 'blur'},
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
           name: [
@@ -109,7 +108,7 @@
             { required: true, message: '请选择状态', trigger: 'change' },
           ],
           age: [
-            { required: true, message: '年龄不能为空', trigger: 'change',type:'number'},
+            { required: true, message: '年龄不能为空',  trigger: 'change',type:'number'},
           ],
           birthday: [
             { required: true, message: '出生日期不能为空', trigger: 'blur',type: 'date'},
@@ -131,10 +130,10 @@
 
     },
     mounted() {
-      this.studentId = this.$route.params.studentId
-      this.get(this.studentId)
+      let teacherId = this.$route.params.teacherId
+      this.get(teacherId)
     },
-    name: 'studentEdit',
+    name: 'teacherEdit',
     methods:{
       ...mapMutations([
         'closeTag'
@@ -153,7 +152,7 @@
       edit() {
         let params = this.addReqDto
         this.addLoading=true
-        ajax(config2.host_admin + config2.editStudent, 'post', params)
+        ajax(config2.host_admin + config2.editTeacher, 'post', params)
           .then(res => {
             this.addLoading=false
             if (res.data.code === '000000') {
@@ -176,7 +175,7 @@
       /** 查询详情 */
       get(id){
         let t = this
-        ajax(config2.host_admin + config2.getStudentDetail + '?studentId='+id, 'post')
+        ajax(config2.host_admin + config2.getTeacher + '?teacherId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
@@ -198,7 +197,7 @@
       },
       close(){
         this.closeTag({
-          name: 'studentEdit'
+          name: 'teacherEdit'
         })
         // this.$router.go(-1)
       }

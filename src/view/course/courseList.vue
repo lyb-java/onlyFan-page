@@ -2,28 +2,28 @@
   <Card>
   <div>
     <div>
-        <span>学号：</span>
-        <Input v-model="condition.stuNo" placeholder="请输入学号"  clearable style="width: 200px" />
-      &nbsp;&nbsp;
-        <span>姓名：</span>
-        <Input v-model="condition.name" placeholder="请输入姓名"  clearable style="width: 200px" />
-      &nbsp;&nbsp;
-      <span>手机号：</span>
-      <Input v-model="condition.phone" placeholder="请输入手机号"  clearable style="width: 200px" />
-        &nbsp;&nbsp;
-        <span>性别：</span>
-        <Select v-model="condition.gender" placeholder="请选择性别" style="width:200px" clearable>
-          <Option  value="0" >男</Option>
-          <Option  value="1" >女</Option>
-        </Select>
-      <br/>
-      <br/>
-        <span>状态：</span>
-        <Select v-model="condition.state" style="width:200px" placeholder="请选择状态" clearable>
-          <Option  value="0" >在校 </Option>
-          <Option  value="1" >离校</Option>
-        </Select>
+      <span>班级名称：</span>
+      <Input v-model="condition.className" placeholder="请输入班级名称"  clearable style="width: 200px" />
       &nbsp;&nbsp; &nbsp;&nbsp;
+      <span>教师姓名：</span>
+      <Input v-model="condition.teacherName" placeholder="请输入教师姓名"  clearable style="width: 200px" />
+      &nbsp;&nbsp;
+      <span>课程名称：</span>
+      <Input v-model="condition.courseName" placeholder="请输入课程名称"  clearable style="width: 200px" />
+      &nbsp;&nbsp;
+      <span>是否有效：</span>
+      <Select v-model="condition.isEffective" placeholder="请选择是否有效" style="width:200px" clearable>
+        <Option  value="0" >无效</Option>
+        <Option  value="1" >有效</Option>
+      </Select>
+      &nbsp;&nbsp;<br/>
+      &nbsp;&nbsp;<br/>
+        <span class="search-lable">上课时间：</span>
+        <DatePicker @on-change="condition.courseStartTime=$event" v-model.trim="condition.courseStartTime"
+                    format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width:120px"/> —
+        <DatePicker @on-change="condition.courseEndTime=$event" v-model.trim="condition.courseEndTime"
+                    format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width:120px"/>
+      &nbsp;&nbsp;
       <Button type="primary" icon="ios-search" :loading="serachLoading" @click="getTable()">&nbsp;&nbsp;查询</Button>&nbsp;&nbsp;
       <Button type="primary" icon="ios-add" @click="addClick()">&nbsp;&nbsp;添加</Button>
         &nbsp;&nbsp;
@@ -53,14 +53,14 @@
         /* pageInfo实体 */
         pageIndex: 1,
         pageSize: 10,
-        showMore:false,
         /* 查询条件 */
         condition: {
-          stuNo:null,
-          name:null,
-          phone:null,
-          gender:null,
-          state:null,
+          className:null,
+          teacherName:null,
+          courseName:null,
+          isEffective:null,
+          courseStartTime:null,
+          courseEndTime:null,
         },
         /* 菜单信息列表数据 */
         tableData:[],
@@ -71,31 +71,38 @@
             key: 'indexNum',
           },
           {
-            title: '学号',
-            key: 'stuNo',
+            title: '教师名称',
+            key: 'teacherName',
+            tooltip: true,
             align: 'center',
           },
           {
-            title: '姓名',
+            title: '班级名称',
             key: 'name',
             tooltip: true,
             align: 'center',
           },
           {
-            title: '性别',
-            key: 'gender',
+            title: '课程名称',
+            key: 'courseName',
             tooltip: true,
             align: 'center',
           },
           {
-            title: '手机号',
-            key: 'phone',
+            title: '上课开始时间',
+            key: 'startTime',
             tooltip: true,
             align: 'center',
           },
           {
-            title: '状态',
-            key: 'state',
+            title: '上课结束时间',
+            key: 'endTime',
+            tooltip: true,
+            align: 'center',
+          },
+          {
+            title: '是否有效',
+            key: 'isEffective',
             tooltip: true,
             align: 'center',
           },
@@ -103,6 +110,11 @@
             title: '操作人',
             key: 'opUserName',
             tooltip: true,
+            align: 'center',
+          },
+          {
+            title: '创建时间',
+            key: 'createTime',
             align: 'center',
           },
           {
@@ -124,8 +136,8 @@
                   },
                   on: {
                     click: () => {
-                      this.$router.push({ name: 'studentEdit',
-                        params: { 'studentId': params.row.studentId }
+                      this.$router.push({ name: 'courseEdit',
+                        params: { 'courseId': params.row.courseId }
                       })
                     }
                   }
@@ -138,8 +150,8 @@
                   on: {
                     click: () => {
                       this.$router.push({
-                        path:'studentDetail',
-                        query: { 'studentId': params.row.studentId }
+                        path:'courseDetail',
+                        query: { 'courseId': params.row.courseId }
                       })
                     }
                   }
@@ -151,7 +163,7 @@
                   },
                   on: {
                     click: () => {
-                      this.delete(params.row.studentId)
+                      this.delete(params.row.courseId)
                     }
                   }
                 },'删除'),
@@ -174,7 +186,7 @@
           condition: t.condition
         }
         this.serachLoading = true
-        ajax(config2.host_admin + config2.getStudentAll, 'post',params)
+        ajax(config2.host_admin + config2.getCourseAll, 'post',params)
           .then(res => {
             this.serachLoading = false
             let result = res.data.data
@@ -183,17 +195,16 @@
               t.total = result.totalCount
               t.tableData.forEach(function(value, index) {
                 value.indexNum = index + (t.pageIndex - 1) * t.pageSize + 1
-                if (value.state === '0') {
-                  value.state = '在校'
-                } else if(value.state === '1') {
-                  value.state = '离校'
-                }
-                if (value.gender === '0') {
-                  value.gender = '男'
-                } else if(value.gender === '1') {
-                  value.gender = '女'
+                if(value.isEffective === '0'){
+                  value.isEffective='无效'
+                }else{
+                  value.isEffective='有效'
                 }
                 value.updateTime = formatString(value.updateTime+'')
+                value.createTime = formatString(value.createTime+'')
+                value.startTime = formatString(value.startTime+'')
+                value.endTime = formatString(value.endTime+'')
+
               })
             } else {
               t.$Modal.error({
@@ -221,7 +232,7 @@
           onOk: () => {
             let t = this
             ajax(
-              config2.host_admin + config2.delStudent + '?studentId=' + id, 'post'
+              config2.host_admin + config2.delCourse + '?courseId=' + id, 'post'
             )
               .then(res => {
                 if (res.data.code !== '000000') {
@@ -247,7 +258,7 @@
       //添加页面跳转
       addClick(){
         this.$router.push({
-          path:'studentAdd'
+          path:'courseAdd'
         })
       }
       },

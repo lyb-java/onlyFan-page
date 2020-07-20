@@ -6,8 +6,8 @@
         <Form ref="addReqDto" :model="addReqDto"  :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
             <div>
-              <Form-item label="学号：" prop="stuNo">
-                <span>{{addReqDto.stuNo}}</span>
+              <Form-item label="工号：" prop="teacherN">
+                <span>{{addReqDto.teacherNo}}</span>
               </Form-item>
               <Form-item label="姓名：" prop="name">
                 <span>{{addReqDto.name}}</span>
@@ -23,6 +23,9 @@
               </Form-item>
             </div>
             <div>
+              <Form-item label="所属班级：" prop="className">
+                <span>{{addReqDto.className}}</span>
+              </Form-item>
               <Form-item label="手机号：" prop="phone">
                 <span>{{addReqDto.phone}}</span>
               </Form-item>
@@ -50,7 +53,7 @@
   import config2 from '@/config/url'
   import { ajax } from '@/libs/https'
   import { mapMutations } from 'vuex'
-  import {dateFormat, formatDate} from "../../api/Utlis";
+  import {dateFormat} from "../../api/Utlis";
   export default {
     name: 'studentDetail',
     data () {
@@ -60,12 +63,9 @@
         },
       }
     },
-    created() {
-
-    },
     mounted() {
-      this.studentId = this.$route.query.studentId
-      this.get(this.studentId)
+      let teacherId = this.$route.query.teacherId
+      this.get(teacherId)
     },
     methods:{
       ...mapMutations([
@@ -74,7 +74,7 @@
       /** 查询详情 */
       get(id){
         let t = this
-        ajax(config2.host_admin + config2.getStudentDetail + '?studentId='+id, 'post')
+        ajax(config2.host_admin + config2.getTeacher + '?teacherId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
@@ -83,6 +83,11 @@
                 this.addReqDto.state = '在校'
               }else{
                 this.addReqDto.state = '离校'
+              }
+              if(result.gender === '0'){
+                this.addReqDto.gender = '男'
+              }else{
+                this.addReqDto.gender = '女'
               }
               this.addReqDto.birthday = dateFormat(new Date(result.birthday))
               this.addReqDto.admissionDate = dateFormat(new Date(result.admissionDate))
@@ -101,7 +106,7 @@
       },
       close(){
         this.closeTag({
-          name: 'studentDetail'
+          name: 'teacherDetail'
         })
         // this.$router.go(-1)
       }
