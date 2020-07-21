@@ -1,10 +1,10 @@
 <template>
   <div class="user-avator-dropdown">
     <Dropdown @on-click="handleClick">
-      <Badge>
-        <avatar username = '李'  style="background-color: #2d8cf0" color="pink" />
+      <Badge :dot="!!messageUnreadCount">
+        <Avatar src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1165314366,4057375435&fm=15&gp=0.jpg" />
       </Badge>
-      <Icon :size="18" type="md-arrow-dropdown"/>
+      <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
 <!--        <DropdownItem name="message">-->
 <!--          消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>-->
@@ -16,51 +16,31 @@
 </template>
 
 <script>
-import './user.less'
-import { mapActions } from 'vuex'
-import Avatar from 'vue-avatar'
-import {getUserInfo} from "../../../../api/user";
-export default {
-  name: 'User',
-  props: {
-    userAvator: {
-      type: String,
-      default: ''
+  import './user.less'
+  import { mapActions } from 'vuex'
+  export default {
+    name: 'User',
+    props: {
+      messageUnreadCount: {
+        type: Number,
+        default: 0
+      }
     },
-    messageUnreadCount: {
-      type: Number,
-      default: 0
-    }
-  },
-  components: {
-    Avatar
-  },
-  mounted() {
-  },
-  methods: {
-    ...mapActions([
-      'handleLogOut'
-    ]),
-    logout () {
-      this.handleLogOut().then(() => {
-        this.$router.push({
-          name: 'login'
+    methods: {
+      ...mapActions([
+        'handleLogOut'
+      ]),
+      logout () {
+        this.handleLogOut().then(() => {
+          this.$router.push({
+            name: 'login'
+          })
         })
-      })
-    },
-    message () {
-      this.$router.push({
-        name: 'message_page'
-      })
-    },
-    handleClick (name) {
-      switch (name) {
-        case 'logout': this.logout()
-          break
-        case 'message': this.message()
-          break
+      },
+      handleClick (name) {
+       this.logout()
+
       }
     }
   }
-}
 </script>

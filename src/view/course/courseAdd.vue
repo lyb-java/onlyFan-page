@@ -5,7 +5,7 @@
       <!--  添加  -->
         <Form ref="addReqDto" :model="addReqDto" :rules="addRuleValidate" :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
-         <div>
+           <div>
           <Form-item label="课程名称：" prop="courseName">
             <Input type="input" v-model.trim="addReqDto.courseName" placeholder="请填写课程名称" style="width: 204px" />
           </Form-item>
@@ -15,11 +15,27 @@
              </Select>
            </Form-item>
            <Form-item label="班级：" prop="classId">
-             <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
-               <Option v-for="item in classList" :value="item.classId" :key="item.classId">{{item.className}}</Option>
+             <Select v-model.trim="addReqDto.classId" filterable style="width:204px">
+               <Option v-for="item in classList" :value="item.classId" :key="item.classId">{{item.name}}</Option>
              </Select>
            </Form-item>
           </div>
+            <div>
+              <Form-item label="上课开始时间：" prop="courseStartTime">
+                <DatePicker @on-change="addReqDto.courseStartTime=$event" v-model.trim="addReqDto.courseStartTime"
+                            format="yyyy-MM-dd HH:mm" type="datetime" placeholder="上课开始时间" style="width:200px"/>
+              </Form-item>
+              <Form-item label="上课结束时间：" prop="courseEndTime">
+                <DatePicker @on-change="addReqDto.courseEndTime=$event" v-model.trim="addReqDto.courseEndTime"
+                            format="yyyy-MM-dd HH:mm" type="datetime" placeholder="上课结束时间" style="width:200px"/>
+              </Form-item>
+              <Form-item label="有效状态：" prop="isEffective">
+                <RadioGroup v-model="addReqDto.isEffective">
+                  <Radio label="0">无效</Radio>
+                  <Radio label="1">有效</Radio>
+                </RadioGroup>
+              </Form-item>
+            </div>
           </div>
         </Form>
       </div>
@@ -38,34 +54,48 @@
   export default {
     data () {
       return {
-        /** 添加属性声明 */
+        /** 属性声明 */
         teacherList:[],
+        classList:[],
         //按钮转转转
         addLoading:false,
         addReqDto: {
-          classSize:null,
-          name:null,
+          classId:null,
           teacherId:null,
+          isEffective:null,
+          courseName:null,
+          courseStartTime:null,
+          courseEndTime:null,
         },
         /** 表单验证 */
         addRuleValidate: {
-          name: [
-            { required: true, message: '班级名称不能为空', trigger: 'blur' },
+          courseName: [
+            { required: true, message: '课程名称不能为空', trigger: 'blur' },
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
-          classSize: [
-            { required: true, message: '班级人数不能为空', trigger: 'blur'},
+          classId: [
+            { required: true, message: '请选择班级', trigger: 'blur',type:'number'},
           ],
           teacherId: [
             { required: true, message: '请选择所属教师', trigger: 'blur',type:'number'},
+          ],
+          isEffective: [
+            { required: true, message: '请选择有效状态', trigger: 'change'},
+          ],
+          courseStartTime: [
+            { required: true, message: '请选择上课开始时间', trigger: 'blur'},
+          ],
+          courseEndTime: [
+            { required: true, message: '请选择上课结束时间', trigger: 'blur'},
           ],
         },
       }
     },
     mounted() {
       this.getTeacherOption()
+      this.getClassOption()
     },
-    name: 'classAdd',
+    name: 'courseAdd',
     methods:{
       ...mapMutations([
         'closeTag'
@@ -84,7 +114,7 @@
       add() {
         let params = this.addReqDto
         this.addLoading=true
-        ajax(config2.host_admin + config2.addClass, 'post', params)
+        ajax(config2.host_admin + config2.addCourse, 'post', params)
           .then(res => {
             this.addLoading=false
             if (res.data.code === '000000') {
@@ -126,9 +156,30 @@
           })
         })
       },
+      /** 查询班级下拉列表 */
+      getClassOption(){
+        let t = this
+        ajax(config2.host_admin + config2.getClassAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.classList = result.data
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
+          })
+        })
+      },
       close(){
         this.closeTag({
-          name: 'classAdd',
+          name: 'courseAdd',
         })
         // this.$router.go(-1)
       }

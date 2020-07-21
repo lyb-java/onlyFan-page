@@ -86,10 +86,11 @@
         })
       },
       close(){
+        this.$router.go(-1)
         this.closeTag({
-          name: 'studentDetail'
+          name: 'studentDetail',
+          query: { 'classId': this.$route.query.classId}
         })
-        // this.$router.go(-1)
       }
     },
   }

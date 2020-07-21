@@ -20,9 +20,10 @@
       &nbsp;&nbsp;<br/>
         <span class="search-lable">上课时间：</span>
         <DatePicker @on-change="condition.courseStartTime=$event" v-model.trim="condition.courseStartTime"
-                    format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width:120px"/> —
-        <DatePicker @on-change="condition.courseEndTime=$event" v-model.trim="condition.courseEndTime"
-                    format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width:120px"/>
+                    format="yyyy-MM-dd" type="date" placeholder="上课时间" style="width:200px"/>
+<!--      —-->
+<!--        <DatePicker @on-change="condition.courseEndTime=$event" v-model.trim="condition.courseEndTime"-->
+<!--                    format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width:120px"/>-->
       &nbsp;&nbsp;
       <Button type="primary" icon="ios-search" :loading="serachLoading" @click="getTable()">&nbsp;&nbsp;查询</Button>&nbsp;&nbsp;
       <Button type="primary" icon="ios-add" @click="addClick()">&nbsp;&nbsp;添加</Button>
@@ -42,6 +43,7 @@
   import config2 from '@/config/url'
   import { ajax } from '@/libs/https'
   import { formatString } from '@/api/Utlis'
+  import {mapMutations} from "vuex";
   export default {
     data () {
       return {
@@ -78,7 +80,7 @@
           },
           {
             title: '班级名称',
-            key: 'name',
+            key: 'className',
             tooltip: true,
             align: 'center',
           },
@@ -91,13 +93,11 @@
           {
             title: '上课开始时间',
             key: 'startTime',
-            tooltip: true,
             align: 'center',
           },
           {
             title: '上课结束时间',
             key: 'endTime',
-            tooltip: true,
             align: 'center',
           },
           {
@@ -176,7 +176,11 @@
     created() {
       this.getTable()
     },
+    name: 'courseAdd',
     methods:{
+      ...mapMutations([
+        'closeTag'
+      ]),
       /** 查询列表 */
       getTable(){
         let t = this

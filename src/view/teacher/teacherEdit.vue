@@ -108,7 +108,7 @@
             { required: true, message: '请选择状态', trigger: 'change' },
           ],
           age: [
-            { required: true, message: '年龄不能为空',  trigger: 'change',type:'number'},
+            { required: true, message: '年龄不能为空',  trigger: 'change'},
           ],
           birthday: [
             { required: true, message: '出生日期不能为空', trigger: 'blur',type: 'date'},
@@ -196,10 +196,11 @@
         })
       },
       close(){
+        this.$router.go(-1)
         this.closeTag({
-          name: 'teacherEdit'
+          name: 'teacherEdit',
+          params: { 'teacherId':this.$route.params.teacherId}
         })
-        // this.$router.go(-1)
       }
     },
   }

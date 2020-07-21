@@ -52,7 +52,7 @@
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
           classSize: [
-            { required: true, message: '班级人数不能为空', trigger: 'blur',type:'number'},
+            { required: true, message: '班级人数不能为空', trigger: 'blur'},
           ],
           teacherId: [
             { required: true, message: '请选择所属教师', trigger: 'blur',type:'number'},
@@ -149,10 +149,11 @@
         })
       },
       close(){
+        this.$router.go(-1)
         this.closeTag({
-          name: 'classEdit'
+          name: 'classEdit',
+          params: { 'classId': this.$route.params.classId}
         })
-        // this.$router.go(-1)
       }
     },
   }

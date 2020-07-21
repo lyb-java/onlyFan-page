@@ -2,46 +2,30 @@
   <div>
     <Card>
       <div >
-        <!--  详情  -->
+        <!--  编辑  -->
         <Form ref="addReqDto" :model="addReqDto"  :label-width="140" style="margin-top: 30px">
-          <div style="display:flex">
             <div>
-              <Form-item label="学号：" prop="stuNo">
-                <span>{{addReqDto.stuNo}}</span>
+              <Form-item label="学生：" prop="studentName">
+                <span>{{addReqDto.studentName}}</span>
               </Form-item>
-              <Form-item label="姓名：" prop="name">
-                <span>{{addReqDto.name}}</span>
+              <Form-item label="考试科目名称：" prop="subjectName">
+                <span>{{addReqDto.subjectName}}</span>
               </Form-item>
-              <Form-item label="性别：" prop="gender">
-                <span>{{addReqDto.gender}}</span>
+              <Form-item label="考试成绩：" prop="points" >
+                <span>{{addReqDto.points}}</span>
               </Form-item>
-              <Form-item label="年龄：" prop="age" >
-                <span>{{addReqDto.age}}</span>
+              <Form-item label="考试开始时间：" prop="startingTime">
+                <span>{{addReqDto.startingTime}}</span>
               </Form-item>
-              <Form-item label="出生日期：" prop="birthday" >
-                <span>{{addReqDto.birthday}}</span>
+              <Form-item label="考试开始时间：" prop="completionTime">
+                <span>{{addReqDto.completionTime}}</span>
               </Form-item>
             </div>
-            <div>
-              <Form-item label="手机号：" prop="phone">
-                <span>{{addReqDto.phone}}</span>
-              </Form-item>
-              <Form-item label="居住地址：" prop="address">
-                <span>{{addReqDto.address}}</span>
-              </Form-item>
-              <Form-item label="入校时间：" prop="admissionDate" >
-                <span>{{addReqDto.admissionDate}}</span>
-              </Form-item>
-              <Form-item label="在校状态：" prop="state">
-                <span>{{addReqDto.state}}</span>
-              </Form-item>
-            </div>
-          </div>
         </Form>
       </div>
       <div style="text-align: center;margin-top:30px">
         &nbsp;&nbsp;
-        <Button @click="close()">返回</Button>
+        <Button @click="close">取消</Button>
       </div>
     </Card>
   </div>
@@ -50,23 +34,24 @@
   import config2 from '@/config/url'
   import { ajax } from '@/libs/https'
   import { mapMutations } from 'vuex'
-  import {dateFormat, formatDate} from "../../api/Utlis";
+  import {formatString} from "../../api/Utlis";
   export default {
-    name: 'studentDetail',
     data () {
       return {
         /** 属性声明 */
+        studentList:[],
+        //按钮转转转
+        addLoading:false,
         addReqDto: {
         },
       }
     },
-    created() {
-
-    },
     mounted() {
-      this.studentId = this.$route.query.studentId
-      this.get(this.studentId)
+      let achievementId = this.$route.query.achievementId
+      this.get(achievementId)
+      this.getStudentOption()
     },
+    name: 'achievementDetail',
     methods:{
       ...mapMutations([
         'closeTag'
@@ -74,18 +59,34 @@
       /** 查询详情 */
       get(id){
         let t = this
-        ajax(config2.host_admin + config2.getStudentDetail + '?studentId='+id, 'post')
+        ajax(config2.host_admin + config2.getAchievement + '?achievementId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
               this.addReqDto = result
-              if(result.state === '0'){
-                this.addReqDto.state = '在校'
-              }else{
-                this.addReqDto.state = '离校'
-              }
-              this.addReqDto.birthday = dateFormat(new Date(result.birthday))
-              this.addReqDto.admissionDate = dateFormat(new Date(result.admissionDate))
+              this.addReqDto.startingTime =  formatString(result.startTime+'')
+              this.addReqDto.completionTime =  formatString(result.endTime+'')
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
+          })
+        })
+      },
+      /** 查询学生下拉列表 */
+      getStudentOption(){
+        let t = this
+        ajax(config2.host_admin + config2.getStudentAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.studentList = result.data
             } else {
               t.$Modal.error({
                 title: '失败',
@@ -100,10 +101,11 @@
         })
       },
       close(){
+        this.$router.go(-1)
         this.closeTag({
-          name: 'studentDetail'
+          name: 'achievementDetail',
+          query: { 'achievementId': this.$route.query.achievementId }
         })
-        // this.$router.go(-1)
       }
     },
   }

@@ -2,52 +2,28 @@
   <div>
     <Card>
       <div >
-        <!--  修改  -->
+        <!--  编辑  -->
         <Form ref="addReqDto" :model="addReqDto" :rules="addRuleValidate" :label-width="140" style="margin-top: 30px">
           <div style="display:flex">
             <div>
-              <Form-item label="学号：" prop="stuNo">
-                <Input v-model.trim="addReqDto.stuNo" placeholder="请填写学号" style="width: 204px"/>
+              <Form-item label="学生：" prop="studentId">
+                <Select v-model.trim="addReqDto.studentId" filterable style="width:204px">
+                  <Option v-for="item in studentList" :value="item.studentId" :key="item.studentId">{{item.name}}</Option>
+                </Select>
               </Form-item>
-              <Form-item label="姓名：" prop="name">
-                <Input type="input" v-model.trim="addReqDto.name" placeholder="请填写姓名" style="width: 204px" />
+              <Form-item label="考试科目名称：" prop="subjectName">
+                <Input type="input" v-model.trim="addReqDto.subjectName" placeholder="请填写考试科目名称" style="width: 204px" />
               </Form-item>
-              <Form-item label="性别：" prop="gender">
-                <RadioGroup v-model="addReqDto.gender">
-                  <Radio label="0">男</Radio>
-                  <Radio label="1">女</Radio>
-                </RadioGroup>
+              <Form-item label="考试成绩：" prop="points" >
+                <Input  type="number" v-model.trim="addReqDto.points"  placeholder="请填写考试成绩" style="width: 200px" />
               </Form-item>
-              <Form-item label="年龄：" prop="age" >
-                <Input  type="number" v-model.trim="addReqDto.age"  placeholder="请填写年龄" style="width: 200px" />
+              <Form-item label="考试开始时间：" prop="startingTime">
+                <DatePicker @on-change="addReqDto.startingTime=$event" v-model.trim="addReqDto.startingTime"
+                            format="yyyy-MM-dd HH:mm" type="datetime" placeholder="考试开始时间" style="width:200px"/>
               </Form-item>
-              <Form-item label="出生日期：" prop="birthday" >
-                <DatePicker
-                  v-model="addReqDto.birthday"
-                  format="yyyy-MM-dd"
-                  type="date"
-                ></DatePicker>
-              </Form-item>
-            </div>
-            <div>
-              <Form-item label="手机号：" prop="phone">
-                <Input type="input" v-model.trim="addReqDto.phone" placeholder="请填写手机号" style="width: 204px" />
-              </Form-item>
-              <Form-item label="居住地址：" prop="address">
-                <Input type="input" v-model.trim="addReqDto.address" placeholder="请填写居住地址" style="width: 204px" />
-              </Form-item>
-              <Form-item label="入校时间：" prop="admissionDate" >
-                <DatePicker
-                  v-model="addReqDto.admissionDate"
-                  format="yyyy-MM-dd"
-                  type="date"
-                ></DatePicker>
-              </Form-item>
-              <Form-item label="在校状态：" prop="state">
-                <RadioGroup v-model="addReqDto.state">
-                  <Radio label="0">在校</Radio>
-                  <Radio label="1">离校</Radio>
-                </RadioGroup>
+              <Form-item label="考试开始时间：" prop="completionTime">
+                <DatePicker @on-change="addReqDto.completionTime=$event" v-model.trim="addReqDto.completionTime"
+                            format="yyyy-MM-dd HH:mm" type="datetime" placeholder="考试开始时间" style="width:200px"/>
               </Form-item>
             </div>
           </div>
@@ -56,7 +32,7 @@
       <div style="text-align: center;margin-top:30px">
         <Button :loading="addLoading" type="primary"  @click="validateSubmitAdd()">保存</Button>
         &nbsp;&nbsp;
-        <Button @click="close()">取消</Button>
+        <Button @click="close">取消</Button>
       </div>
     </Card>
   </div>
@@ -65,76 +41,58 @@
   import config2 from '@/config/url'
   import { ajax } from '@/libs/https'
   import { mapMutations } from 'vuex'
+  import {formatString} from "../../api/Utlis";
   export default {
     data () {
-      const phoneChk = (rule, value, callback) => {
-        let temp = this.addReqDto.phone
-        if (temp == null || temp === '') {
-          callback(new Error('手机号码不能为空'))
-        } else if (!/^1[3456789]\d{9}$/.test(temp)) {
-          callback(new Error('手机号码格式不正确'))
+      const pointsVali = (rule, value, callback) => {
+        let regNum = /^\d{0,8}.\d{0,2}$/;
+        if (value === '') {
+          callback(new Error('考试成绩不能为空'));
+        } else if (!regNum.test(value)) {
+          callback(new Error('格式不正确（例：95.55）'));
         } else {
-          callback()
+          callback();
         }
       }
       return {
         /** 属性声明 */
+        studentList:[],
         //按钮转转转
         addLoading:false,
-        studentId:null,
         addReqDto: {
-          stuNo:null,
-          name:null,
-          gender:null,
-          age:null,
-          birthday:null,
-          address:null,
-          admissionDate:null,
-          state:null,
+          startingTime:null,
+          completionTime:null,
+          studentId:null,
+          subjectName:null,
+          points:0,
         },
         /** 表单验证 */
         addRuleValidate: {
-          stuNo: [
-            { required: true, message: '学号不能为空',trigger: 'blur'},
+          studentId: [
+            { required: true, message: '请选择学生',trigger: 'blur',type:'number'},
+          ],
+          subjectName: [
+            { required: true, message: '考试科目名称不能为空',trigger: 'blur'},
             { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
           ],
-          name: [
-            { required: true, message: '姓名不能为空', trigger: 'blur' },
-            { type: 'string', max: 20, message: '最多输入20个字符', trigger: 'blur' },
+          points: [
+            { required: true,message:'考试成绩不能为空',trigger: 'blur'},
           ],
-          gender: [
-            { required: true, message: '请选择性别', trigger: 'change' },
+          startingTime: [
+            { required: true, message: '请选择考试开始时间', trigger: 'change',pattern: /.+/ }
           ],
-          state: [
-            { required: true, message: '请选择状态', trigger: 'change' },
-          ],
-          age: [
-            { required: true, message: '年龄不能为空', trigger: 'change',type:'number'},
-          ],
-          birthday: [
-            { required: true, message: '出生日期不能为空', trigger: 'blur',type: 'date'},
-          ],
-          phone: [
-            { required: true, trigger: 'blur', validator: phoneChk },
-          ],
-          address: [
-            { required: true, message: '居住地址不能为空', trigger: 'blur' },
-            { type: 'string', max: 200, message: '最多输入200个字符', trigger: 'blur' },
-          ],
-          admissionDate: [
-            { required: true, message: '出生日期不能为空', trigger: 'blur',type: 'date'},
+          completionTime: [
+            { required: true, message: '请选择考试结束时间', trigger: 'change',pattern: /.+/ },
           ],
         },
       }
     },
-    created() {
-
-    },
     mounted() {
-      this.studentId = this.$route.params.studentId
-      this.get(this.studentId)
+      let achievementId = this.$route.params.achievementId
+      this.get(achievementId)
+      this.getStudentOption()
     },
-    name: 'studentEdit',
+    name: 'achievementEdit',
     methods:{
       ...mapMutations([
         'closeTag'
@@ -143,17 +101,17 @@
       validateSubmitAdd () {
         this.$refs['addReqDto'].validate(valid => {
           if (valid) {
-            this.edit()
+            this.add()
           } else {
             this.$Message.error('请完善表单信息!')
           }
         })
       },
       /** 提交 */
-      edit() {
+      add() {
         let params = this.addReqDto
         this.addLoading=true
-        ajax(config2.host_admin + config2.editStudent, 'post', params)
+        ajax(config2.host_admin + config2.editAchievement, 'post', params)
           .then(res => {
             this.addLoading=false
             if (res.data.code === '000000') {
@@ -173,16 +131,38 @@
           })
         })
       },
+      /** 查询学生下拉列表 */
+      getStudentOption(){
+        let t = this
+        ajax(config2.host_admin + config2.getStudentAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.studentList = result.data
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
+          })
+        })
+      },
       /** 查询详情 */
       get(id){
         let t = this
-        ajax(config2.host_admin + config2.getStudentDetail + '?studentId='+id, 'post')
+        ajax(config2.host_admin + config2.getAchievement + '?achievementId='+id, 'post')
           .then(res => {
             let result = res.data.data
             if (res.data.code === '000000') {
-                this.addReqDto = result
-              this.addReqDto.birthday = new Date(result.birthday)
-              this.addReqDto.admissionDate = new Date(result.admissionDate)
+              this.addReqDto = result
+              this.addReqDto.points = Number(result.points)
+              this.addReqDto.startingTime =  formatString(result.startTime+'')
+              this.addReqDto.completionTime =  formatString(result.endTime+'')
             } else {
               t.$Modal.error({
                 title: '失败',
@@ -197,10 +177,11 @@
         })
       },
       close(){
+        this.$router.go(-1)
         this.closeTag({
-          name: 'studentEdit'
+          name: 'achievementEdit',
+          params: { 'achievementId': this.$route.params.achievementId }
         })
-        // this.$router.go(-1)
       }
     },
   }
