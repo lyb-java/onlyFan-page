@@ -56,7 +56,8 @@ export default [
     component: Main,
     meta: {
       icon: 'md-menu',
-      title: '系统管理'
+      title: '系统管理',
+      access: ['super_admin'],
     },
     children: [
       {
@@ -71,7 +72,6 @@ export default [
                             * 如果这级路由有子路由，则子路由也只有super_admin才能访问
                             * 如果不设置此字段，则所有用户均可访问
                             */
-        access: ['super_admin'],
         component: () => import('@/view/system/sysUserAll.vue')
       }
       ,{
@@ -86,7 +86,6 @@ export default [
                             * 如果这级路由有子路由，则子路由也只有super_admin才能访问
                             * 如果不设置此字段，则所有用户均可访问
                             */
-        access: ['super_admin'],
         component: () => import('@/view/system/sysRoleAll.vue')
       }
     ]
@@ -103,7 +102,6 @@ export default [
           title: '学生信息管理',
           icon: 'md-contacts'
         },
-        access: ['super_admin','admin_teacher','admin_student'],
         component: () => import('@/view/student/studentList')
       },
       {
@@ -113,7 +111,7 @@ export default [
           // title: '添加学生信息',
           title:'{{添加学生信息}}',
           hideInBread: true,
-          hideInMenu: true
+          hideInMenu: true,
         },
         component: () => import('@/view/student/studentAdd')
       },
@@ -144,6 +142,9 @@ export default [
     path: '/',
     name: '/teacher',
     component: Main,
+    meta:{
+      access: ['super_admin','admin_teacher'],
+    },
     children: [
       {
         path: '/teacher',
@@ -152,7 +153,6 @@ export default [
           title: '教师信息管理',
           icon: 'md-people'
         },
-        access: ['super_admin','admin_teacher'],
         component: () => import('@/view/teacher/teacherList')
       },
       {
@@ -192,6 +192,9 @@ export default [
     path: '/',
     name: '/class',
     component: Main,
+    meta:{
+      access: ['super_admin','admin_teacher'],
+    },
     children: [
       {
         path: '/class',
@@ -200,7 +203,6 @@ export default [
           title: '班级信息管理',
           icon: 'logo-buffer'
         },
-        access: ['super_admin','admin_teacher'],
         component: () => import('@/view/class/classList')
       },
       {
@@ -240,6 +242,9 @@ export default [
     path: '/',
     name: '/course',
     component: Main,
+    meta:{
+      access: ['super_admin','admin_teacher'],
+    },
     children: [
       {
         path: '/course',
@@ -248,7 +253,7 @@ export default [
           title: '课程信息管理',
           icon: 'md-book'
         },
-        access: ['super_admin','admin_teacher'],
+
         component: () => import('@/view/course/courseList')
       },
       {
@@ -306,7 +311,6 @@ export default [
           hideInBread: true,
           hideInMenu: true
         },
-        access: ['super_admin','admin_teacher'],
         component: () => import('@/view/achievement/achievementAdd')
       },
       {
@@ -317,7 +321,6 @@ export default [
           hideInBread: true,
           hideInMenu: true
         },
-        access: ['super_admin','admin_teacher'],
         component: () => import('@/view/achievement/achievementEdit')
       }
       ,
@@ -337,6 +340,9 @@ export default [
     path: '/',
     name: '/finance',
     component: Main,
+    meta:{
+      access: ['super_admin'],
+    },
     children: [
       {
         path: '/finance',

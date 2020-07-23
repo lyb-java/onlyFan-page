@@ -32,9 +32,20 @@
         <Form-item label="用户名称：" prop="userName">
           <Input v-model.trim="addReqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
         </Form-item>
-        <Form-item label="用户类型：" prop="roleId">
-          <Select v-model.trim="addReqDto.roleId" filterable style="width:204px">
+        <Form-item label="用户类型：" prop="roleId"  >
+          <Select v-model.trim="addReqDto.roleId" filterable style="width:204px" @on-change="showSel(addReqDto.roleId)">
             <Option v-for="item in roles" :value="item.roleId" :key="item.roleId">{{item.roleName}}</Option>
+          </Select>
+        </Form-item>
+      <!--        1 管理员 2 教师 3 学生-->
+        <Form-item label="教师：" prop="teacherId" :hidden="showTeacher">
+        <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
+          <Option v-for="item in teacherList" :value="item.teacherId" :key="item.teacherId">{{item.name}}</Option>
+        </Select>
+      </Form-item>
+        <Form-item label="学生：" prop="studentId" :hidden="showStudent">
+          <Select v-model.trim="addReqDto.studentId" filterable style="width:204px">
+            <Option v-for="item in studentList" :value="item.studentId" :key="item.studentId">{{item.name}}</Option>
           </Select>
         </Form-item>
         <Form-item label="用户账号：" prop="account">
@@ -70,6 +81,17 @@
           <Select v-model="editReqDto.roleId" filterable style="width:204px">
             <Option v-for="item in roles" :value="item.roleId" :key="item.roleId">{{item.roleName}}</Option>
           </Select>
+          <!--        1 管理员 2 教师 3 学生-->
+          <Form-item label="教师：" prop="teacherId">
+            <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
+              <Option v-for="item in teacherList" :value="item.teacherId" :key="item.teacherId">{{item.name}}</Option>
+            </Select>
+          </Form-item>
+          <Form-item label="学生：" prop="studentId"  >
+            <Select v-model.trim="addReqDto.studentId" filterable style="width:204px">
+              <Option v-for="item in studentList" :value="item.studentId" :key="item.studentId">{{item.name}}</Option>
+            </Select>
+          </Form-item>
         </Form-item>
         <Form-item label="用户账号：" prop="account">
           <Input type="input" v-model.trim="editReqDto.account" placeholder="请填写用户账号" style="width: 204px" />
@@ -145,7 +167,24 @@
         }
         callback()
       }
+      const teacherVali =(rule, value, callback) => {
+        let roleId =  this.addReqDto.roleId
+        if (roleId === 2 && value ==null || value < 1) {
+          callback(new Error('请选择教师'))
+        }
+        callback()
+      }
+      const studentVali =(rule, value, callback) => {
+        let roleId =  this.addReqDto.roleId
+        if (roleId === 3 && value ==null || value < 1) {
+          callback(new Error('请选择学生'))
+        }
+        callback()
+      }
+
       return {
+        showTeacher:true,
+        showStudent:true,
         PAGE_INDEX: 1,
         /* 分页total属性绑定值 */
         total: 0,
@@ -248,7 +287,11 @@
         //按钮转转转
         addLoading:false,
         roles:[],
+        teacherList:[],
+        studentList:[],
         addReqDto: {
+          studentId:null,
+          teacherId:null,
           account:null,
           password: null,
           userName: null,
@@ -265,6 +308,12 @@
         addRuleValidate: {
           roleId: [
             { required: true, message: '请选择用户类型',trigger: 'change', type: 'number' }
+          ],
+          studentId: [
+            { required: true, trigger: 'change', type: 'number',validators:studentVali }
+          ],
+          teacherId: [
+            { required: true,trigger: 'change', type: 'number',validators:teacherVali }
           ],
           account: [
             { required: true, message: '账户不能为空', trigger: 'blur' },
@@ -368,13 +417,14 @@
       },
       /** 添加表单验证 */
       validateSubmitAdd () {
-        this.$refs['addReqDto'].validate(valid => {
-          if (valid) {
-            this.addUser()
-          } else {
-            this.$Message.error('请完善表单信息!')
-          }
-        })
+        this.addUser()
+        // this.$refs['addReqDto'].validate(valid => {
+        //   if (valid) {
+        //     this.addUser()
+        //   } else {
+        //     this.$Message.error('请完善表单信息!')
+        //   }
+        // })
       },
       /** 添加用户提交 */
       addUser () {
@@ -406,6 +456,8 @@
         this.addModal = true;
         this.$refs['addReqDto'].resetFields()
         this.getUserRole()
+        this.getStudentOption()
+        this.getTeacherOption()
       },
       /** 点击取消清空添加表单 */
       addCancel(){
@@ -419,7 +471,8 @@
         this.$refs['editReqDto'].resetFields()
         this.getUserRole()
         this.getUser(id,1)
-
+        this.getStudentOption()
+        this.getTeacherOption()
       },
       /** 点击取消清空编辑表单 */
       editCancel(){
@@ -485,13 +538,13 @@
       },
       /** 添加表单验证 */
       validateSubmitEdit () {
-        this.$refs['editReqDto'].validate(valid => {
-          if (valid) {
+        // this.$refs['editReqDto'].validate(valid => {
+        //   if (valid) {
             this.editUser()
-          } else {
-            this.$Message.error('请完善表单信息!')
-          }
-        })
+          // } else {
+          //   this.$Message.error('请完善表单信息!')
+          // }
+        // })
       },
       /** 用户编辑提交 */
       editUser(){
@@ -556,6 +609,58 @@
             this.loading = false
           }
         })
+      },
+      /** 查询学生下拉列表 */
+      getStudentOption(){
+        let t = this
+        ajax(config2.host_admin + config2.getStudentAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.studentList = result.data
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
+          })
+        })
+      },
+      /** 查询教师下拉列表 */
+      getTeacherOption(){
+        let t = this
+        ajax(config2.host_admin + config2.getTeacherAllOption, 'post')
+          .then(res => {
+            let result = res.data
+            if (res.data.code === '000000') {
+              this.teacherList = result.data
+            } else {
+              t.$Modal.error({
+                title: '失败',
+                content: result.msg
+              })
+            }
+          }).catch(err => {
+          t.$Modal.error({
+            title: '失败',
+            content: '系统维护中，请稍后:'+err
+          })
+        })
+      },
+      showSel(roleId){
+        if(roleId === 2){
+          this.showTeacher = false;
+          this.showStudent = true;
+        }else  if(roleId === 3){
+          this.showStudent = false;
+          this.showTeacher = true;
+        }
+
       },
       },
   }

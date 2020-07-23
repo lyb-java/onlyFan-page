@@ -5,6 +5,8 @@ import { forEach, hasOneOf, objEqual } from '@/libs/tools'
 const { title, cookieExpires, useI18n } = config
 
 export const TOKEN_KEY = 'LIXIA_TOKEN_KEY'
+export const ACCESSS_KEY = 'LIXIA_ACCESSS_KEY'
+export const USERNAME_KEY = 'LIXIA_USERNAME_KEY'
 
 export const setToken = (token) => {
   Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 })
@@ -13,6 +15,25 @@ export const setToken = (token) => {
 export const getToken = () => {
   const token = Cookies.get(TOKEN_KEY)
   if (token) return token
+  else return false
+}
+
+export const setAccess = (token) => {
+  Cookies.set(ACCESSS_KEY, token, { expires: cookieExpires || 1 })
+}
+
+export const getAccess = () => {
+  const access = Cookies.get(ACCESSS_KEY)
+  if (access) return access
+  else return false
+}
+export const setUserName = (token) => {
+  Cookies.set(USERNAME_KEY, token, { expires: cookieExpires || 1 })
+}
+
+export const getUserName = () => {
+  const userName = Cookies.get(USERNAME_KEY)
+  if (userName) return userName
   else return false
 }
 

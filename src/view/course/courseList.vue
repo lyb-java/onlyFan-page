@@ -26,7 +26,7 @@
 <!--                    format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width:120px"/>-->
       &nbsp;&nbsp;
       <Button type="primary" icon="ios-search" :loading="serachLoading" @click="getTable()">&nbsp;&nbsp;查询</Button>&nbsp;&nbsp;
-      <Button type="primary" icon="ios-add" @click="addClick()">&nbsp;&nbsp;添加</Button>
+      <Button type="primary" icon="ios-add" @click="addClick()" v-if=" this.access === 'super_admin'">&nbsp;&nbsp;添加</Button>
         &nbsp;&nbsp;
     </div>
     <br>
@@ -44,9 +44,11 @@
   import { ajax } from '@/libs/https'
   import { formatString } from '@/api/Utlis'
   import {mapMutations} from "vuex";
+  import {getAccess} from "../../libs/util";
   export default {
     data () {
       return {
+        access:getAccess(),
         PAGE_INDEX: 1,
         /* 分页total属性绑定值 */
         total: 0,
@@ -128,8 +130,8 @@
             align: 'center',
             width: 200,
             render: (h, params) => {
-              return h('div', {}, [
-                h('Button', {
+              return  h('div', {}, [
+                this.access === 'super_admin' && h('Button', {
                   props: { type: 'warning',size:'small' },
                   style:{
                     marginRight : '3px'
@@ -156,6 +158,7 @@
                     }
                   }
                 },'查看详情'),
+                this.access === 'super_admin' &&
                 h('Button', {
                   props: { type: 'error',size:'small' },
                   style:{

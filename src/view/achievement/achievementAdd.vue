@@ -118,7 +118,7 @@
           })
         })
       },
-      /** 查询班级下拉列表 */
+      /** 查询学生下拉列表 */
       getStudentOption(){
         let t = this
         ajax(config2.host_admin + config2.getStudentAllOption, 'post')

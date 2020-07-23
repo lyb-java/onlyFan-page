@@ -22,7 +22,7 @@
 import LoginForm from '_c/login-form'
 import axios from '@/libs/api.request'
 import config from '@/config/url'
-import { setToken, getToken } from '@/libs/util'
+import { setToken, getToken,setUserName,setAccess } from '@/libs/util'
 export default {
   components: {
     LoginForm
@@ -46,6 +46,8 @@ export default {
           t.$store.commit('setHasGetInfo', true)
           //设置token
           setToken(rspDto.token)
+          setAccess(rspDto.access)
+          setUserName(rspDto.userName)
           //跳转主页
           this.$router.push({
             name: this.$config.homeName
