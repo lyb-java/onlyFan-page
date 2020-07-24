@@ -77,22 +77,11 @@
         <Form-item label="用户名称：" prop="userName">
           <Input v-model.trim="editReqDto.userName" placeholder="请填写用户名称" style="width: 204px"/>
         </Form-item>
-        <Form-item label="用户类型：" prop="roleId">
-          <Select v-model="editReqDto.roleId" filterable style="width:204px">
-            <Option v-for="item in roles" :value="item.roleId" :key="item.roleId">{{item.roleName}}</Option>
-          </Select>
-          <!--        1 管理员 2 教师 3 学生-->
-          <Form-item label="教师：" prop="teacherId">
-            <Select v-model.trim="addReqDto.teacherId" filterable style="width:204px">
-              <Option v-for="item in teacherList" :value="item.teacherId" :key="item.teacherId">{{item.name}}</Option>
-            </Select>
-          </Form-item>
-          <Form-item label="学生：" prop="studentId"  >
-            <Select v-model.trim="addReqDto.studentId" filterable style="width:204px">
-              <Option v-for="item in studentList" :value="item.studentId" :key="item.studentId">{{item.name}}</Option>
-            </Select>
-          </Form-item>
-        </Form-item>
+<!--        <Form-item label="用户类型：" prop="roleId">-->
+<!--          <Select v-model="editReqDto.roleId" filterable style="width:204px">-->
+<!--            <Option v-for="item in roles" :value="item.roleId" :key="item.roleId">{{item.roleName}}</Option>-->
+<!--          </Select>-->
+<!--        </Form-item>-->
         <Form-item label="用户账号：" prop="account">
           <Input type="input" v-model.trim="editReqDto.account" placeholder="请填写用户账号" style="width: 204px" />
         </Form-item>
@@ -227,7 +216,7 @@
             align: 'center'
           },
           {
-            title: '角色名称',
+            title: '用户类型',
             key: 'roleName',
             tooltip: true,
             align: 'center'
@@ -613,7 +602,7 @@
       /** 查询学生下拉列表 */
       getStudentOption(){
         let t = this
-        ajax(config2.host_admin + config2.getStudentAllOption, 'post')
+        ajax(config2.host_admin + config2.getStudentOptionNoUserId, 'post')
           .then(res => {
             let result = res.data
             if (res.data.code === '000000') {
@@ -634,7 +623,7 @@
       /** 查询教师下拉列表 */
       getTeacherOption(){
         let t = this
-        ajax(config2.host_admin + config2.getTeacherAllOption, 'post')
+        ajax(config2.host_admin + config2.getTeacherOptionNoUserId, 'post')
           .then(res => {
             let result = res.data
             if (res.data.code === '000000') {

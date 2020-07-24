@@ -27,8 +27,8 @@ export const getAccess = () => {
   if (access) return access
   else return false
 }
-export const setUserName = (token) => {
-  Cookies.set(USERNAME_KEY, token, { expires: cookieExpires || 1 })
+export const setUserName = (userName) => {
+  Cookies.set(USERNAME_KEY, userName, { expires: cookieExpires || 1 })
 }
 
 export const getUserName = () => {
@@ -53,6 +53,7 @@ const showThisMenuEle = (item, access) => {
  */
 export const getMenuByRouter = (list, access) => {
   let res = []
+  access = getAccess()
   forEach(list, item => {
     if (!item.meta || (item.meta && !item.meta.hideInMenu)) {
       let obj = {

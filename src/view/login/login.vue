@@ -22,7 +22,7 @@
 import LoginForm from '_c/login-form'
 import axios from '@/libs/api.request'
 import config from '@/config/url'
-import { setToken, getToken,setUserName,setAccess } from '@/libs/util'
+import { setToken,setUserName,setAccess } from '@/libs/util'
 export default {
   components: {
     LoginForm
@@ -38,7 +38,7 @@ export default {
       }).then(res => {
         if (res.data.code === '000000') {
           let rspDto = res.data.data
-          //设置 用户名、账户名、用户id、权限代码、
+          //设置 用户名、账户名、用户id、权限代码、   没屌用  不知道怎么搞
           t.$store.commit('setUserName', rspDto.userName)
           t.$store.commit('setAccount', rspDto.account)
           t.$store.commit('setUserId', rspDto.id)

@@ -91,6 +91,11 @@ export default {
     // },
     // 退出登录
     handleLogOut ({ state, commit }) {
+      // 关闭浏览器窗口的时候清空浏览器缓存在localStorage的数据
+      window.onbeforeunload = function (e) {
+        var storage = window.localStorage;
+        storage.clear()
+      }
       return new Promise((resolve, reject) => {
           commit('setToken', '')
           commit('setAccess', [])

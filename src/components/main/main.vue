@@ -66,7 +66,7 @@ export default {
       collapsed: false,
       minLogo,
       maxLogo,
-      isFullscreen: false
+      isFullscreen: false,
     }
   },
   computed: {

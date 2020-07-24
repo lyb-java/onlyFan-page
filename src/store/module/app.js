@@ -15,6 +15,7 @@ import { saveErrorLogger } from '@/api/data'
 import router from '@/router'
 import routers from '@/router/routers'
 import config from '@/config'
+import {getAccess} from "@/libs/util";
 const { homeName } = config
 
 const closePage = (state, route) => {
@@ -35,7 +36,7 @@ export default {
     hasReadErrorPage: false
   },
   getters: {
-    menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access),
+    menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState),
     errorCount: state => state.errorList.length
   },
   mutations: {

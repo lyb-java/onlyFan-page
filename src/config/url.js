@@ -35,6 +35,7 @@ const config = {
   /** 学生信息管理 */
   //下拉列表
   getStudentAllOption: "/student/getalloption",
+  getStudentOptionNoUserId: "/student/getoptionnouserid",
   //列表
   getStudentAll: "/student/getallpage",
   //新增
@@ -83,6 +84,7 @@ const config = {
   /** 教师信息管理 */
   //下拉列表
   getTeacherAllOption: "/teacher/getalloption",
+  getTeacherOptionNoUserId: "/teacher/getoptionnouserid",
   //列表
   getTeacherAll: "/teacher/getallpage",
   //新增

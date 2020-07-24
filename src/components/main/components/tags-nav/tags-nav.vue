@@ -74,6 +74,9 @@ export default {
       }
     }
   },
+  created() {
+    this.handleTagsOption('all')
+  },
   computed: {
     currentRouteObj () {
       const { name, params, query } = this.value

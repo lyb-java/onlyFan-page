@@ -18,6 +18,7 @@
 <script>
   import './user.less'
   import { mapActions } from 'vuex'
+  import {getUserName} from "../../../../libs/util";
   export default {
     name: 'User',
     props: {
